@@ -47,9 +47,10 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Factorial.fs" />
+    <Compile Include="FibonacciNumber.fs" />
+    <Compile Include="ListFlip.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
-    <Compile Include="FibonacciNumber.fs" />
     <Compile Include="EntryPoint.fs" />
   </ItemGroup>
   <ItemGroup>

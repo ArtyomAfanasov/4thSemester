@@ -1,6 +1,6 @@
 ﻿/// Входная точка приложения
-module EntryPoint =
+module EntryPoint 
     
     [<EntryPoint>]
-    let main argv =                    
+    let main argv =       
         0
