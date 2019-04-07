@@ -49,6 +49,7 @@
     <Compile Include="Factorial.fs" />
     <Compile Include="FibonacciNumber.fs" />
     <Compile Include="ListFlip.fs" />
+    <Compile Include="ListCreation.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
     <Compile Include="EntryPoint.fs" />
