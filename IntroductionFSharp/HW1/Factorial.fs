@@ -4,7 +4,7 @@ module Factorial
     /// Считает факториал от 'input'.
     let factorial input =   
         match input with 
-        | positive when positive > 0 ->
+        | _ when input > 0 ->
             let rec loop input acc =
                 if input = 1 then
                     acc
