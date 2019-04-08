@@ -2,20 +2,15 @@
 module FibonacciNumber
 
     /// Подсчёт числа Фибоначчи с номером 'input'.
-    let fibonacciNumber inputNumber =                  
-        let mutable operationOne = (+)
-        let mutable operationTwo = (-)
-        if inputNumber < 0 then 
-            operationOne <- (-)
-            operationTwo <- (+)                            
-
-        let rec loop curNumberOfNumber throughOneBeforeCurNumber previouseNumber =            
+    let fibonacciNumber inputNumber =                          
+        let rec loop curNumberOfNumber throughOneBeforeCurNumber previousNumber =            
             match curNumberOfNumber with
-            | positive when positive <> 0 ->                                   
-                let curNumber = operationOne throughOneBeforeCurNumber previouseNumber                                   
-                loop (operationTwo curNumberOfNumber 1) previouseNumber curNumber     
+            | _ when curNumberOfNumber > 0 ->                                   
+                let curNumber = throughOneBeforeCurNumber + previousNumber                                   
+                loop (curNumberOfNumber - 1) previousNumber curNumber     
                     
             | 0 when throughOneBeforeCurNumber <> 0 ->  throughOneBeforeCurNumber
             | 0 -> throughOneBeforeCurNumber
+            | _ -> raise (System.AggregateException("Для отрицательных номеров не определено."))
 
         loop inputNumber 0 1                      
