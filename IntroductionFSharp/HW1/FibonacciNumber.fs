@@ -3,13 +3,13 @@ module FibonacciNumber
 
     /// Подсчёт числа Фибоначчи с номером 'input'.
     let fibonacciNumber inputNumber =                          
-        let rec loop curNumberOfNumber throughOneBeforeCurNumber previousNumber =            
+        let rec loop curNumberOfNumber beforeLastNumber previousNumber =            
             match curNumberOfNumber with
             | _ when curNumberOfNumber > 0 ->                                   
-                let curNumber = throughOneBeforeCurNumber + previousNumber                                   
+                let curNumber = beforeLastNumber + previousNumber                                   
                 loop (curNumberOfNumber - 1) previousNumber curNumber     
                                 
-            | 0 -> throughOneBeforeCurNumber
+            | 0 -> beforeLastNumber
             | _ -> raise (System.AggregateException("Для отрицательных номеров не определено."))
 
         loop inputNumber 0 1                      
