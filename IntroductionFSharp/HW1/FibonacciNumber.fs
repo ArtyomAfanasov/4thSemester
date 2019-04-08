@@ -8,8 +8,7 @@ module FibonacciNumber
             | _ when curNumberOfNumber > 0 ->                                   
                 let curNumber = throughOneBeforeCurNumber + previousNumber                                   
                 loop (curNumberOfNumber - 1) previousNumber curNumber     
-                    
-            | 0 when throughOneBeforeCurNumber <> 0 ->  throughOneBeforeCurNumber
+                                
             | 0 -> throughOneBeforeCurNumber
             | _ -> raise (System.AggregateException("Для отрицательных номеров не определено."))
 
