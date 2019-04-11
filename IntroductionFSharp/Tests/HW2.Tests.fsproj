@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="FirstEntryTest.fs" />
+    <Compile Include="PalindromeTest.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
   </ItemGroup>
