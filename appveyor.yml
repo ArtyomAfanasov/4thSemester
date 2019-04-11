@@ -1,4 +1,4 @@
-image: Visual Studio 2019
+image: Visual Studio 2017
 
 before_build:
   - nuget restore 4thSemester/IntroductionFSharp/HW2/HW2.sln
