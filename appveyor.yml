@@ -1,0 +1,10 @@
+image: Visual Studio 2017 
+
+before_build:
+    - nuget restore IntroductionFSharp/Hw2/Hw2.sln
+
+build:
+    project: IntroductionFSharp/Hw2/Hw2.sln
+
+test_script:
+    - dotnet test IntroductionFSharp/Hw2/Hw2.sln
