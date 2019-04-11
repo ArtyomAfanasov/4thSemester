@@ -7,29 +7,13 @@ let listFlip list =
         | head :: tail -> loop tail (head :: accFlipedList)            
         | [] -> accFlipedList
 
-    loop list []
-
-/// Создать список из строки.
-let createFlipedListFromStr (str : string) =
-    let length = String.length str
-    let rec listCreationLoop accList step = 
-        match str.[step] with 
-        | _ when step = length - 1 ->                 
-            str.[step] :: accList
-        | ' ' ->                
-            listCreationLoop accList (step + 1)                               
-        | _  ->                                
-            listCreationLoop (str.[step] :: accList) (step + 1)
-
-    listCreationLoop [] 0                
+    loop list []           
         
 /// Проверить: является ли строка палиндромом.
-let isPolindrome (str : string) =    
-    let preparedStr = str.ToLower()
-    let convertedAndFlipedListFromStr = createFlipedListFromStr preparedStr         
-    let normalListFromStr = listFlip convertedAndFlipedListFromStr
+let isPalindrome (str : string) =    
+    let preparedStr = (str.ToLower()).Replace(" ", "")
 
-    if normalListFromStr = convertedAndFlipedListFromStr then
-        true
-    else 
-        false
+    let normalListFromStr = List.ofArray <| preparedStr.ToCharArray()
+    let flipedListFromStr = listFlip normalListFromStr      
+
+    normalListFromStr = flipedListFromStr        
