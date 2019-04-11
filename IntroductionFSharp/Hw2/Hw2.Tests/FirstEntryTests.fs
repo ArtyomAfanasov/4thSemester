@@ -5,7 +5,7 @@ open FsUnit
 open FirstEntry
 
 [<TestFixture>]
-type TestClass () =
+type FirstEntryTestClass () =
     
     [<Test>]
     member this.``FirstEntry should complete with 4 for data: 5 in [ 1; 2; 3; 4; 5; 6 ]`` () =
