@@ -10,6 +10,6 @@
                     loop tail
 
             // Заданного числа в массиве нет.
-            | _ -> -1 
+            | _ -> raise (System.Exception("Wishful number don't consist in list"))            
         
         loop list
