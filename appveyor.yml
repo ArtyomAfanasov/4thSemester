@@ -1,11 +1,11 @@
 image: Visual Studio 2017
 
 before_build:
-  - nuget restore 4thSemester/IntroductionFSharp/HW2/HW2.sln
+  - nuget restore HW2/HW2.sln
 
 build:
-  project: 4thSemester/IntroductionFSharp/HW2/HW2.sln
+  project: HW2/HW2.sln
 
 test_script:
-  - nunit3-console 4thSemester/IntroductionFSharp/HW2/HW2.sln \
+  - nunit3-console HW2/HW2.sln \
     --result=myresults.xml;format=AppVeyor
