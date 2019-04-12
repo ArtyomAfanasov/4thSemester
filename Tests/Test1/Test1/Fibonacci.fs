@@ -1,4 +1,5 @@
-﻿module FibonacciNumber
+﻿/// Модуль с функцией, считающей сумму всех чисел Фибоначчи, не превосходящих 1000000.
+module FibonacciNumber
 
 /// Сумма чисел Фибоначчи, не превосходящих 1000000.
 let SumOfOddFibonacciNumberLessThen1000000 () =    
@@ -54,4 +55,8 @@ let lastFibonacciNumberLessThan1000000 () =
     
 [<EntryPoint>]
 let main argv =    
+    printfn "%s \n" (Stars.squreString 4).Value
+    printfn "%s \n" (Stars.squreString 3).Value
+    printfn "%s \n" (Stars.squreString 2).Value
+    printfn "%s \n" (Stars.squreString 1).Value
     0 

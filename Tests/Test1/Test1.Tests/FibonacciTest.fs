@@ -5,7 +5,7 @@ open NUnit.Framework
 open FibonacciNumber
 
 [<TestFixture>]
-type TestClass () =
+type FibonacciTestClass () =
 
     [<Test>]
     member this.``SumOfOddFibonacciNumberLessThenSupremum with supremum is 4 should equal 7``() =       
