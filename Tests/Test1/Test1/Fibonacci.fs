@@ -58,5 +58,5 @@ let main argv =
     printfn "%s \n" (Stars.squreString 4).Value
     printfn "%s \n" (Stars.squreString 3).Value
     printfn "%s \n" (Stars.squreString 2).Value
-    printfn "%s \n" (Stars.squreString 1).Value
+    printfn "%s \n" (Stars.squreString 1).Value   
     0 
