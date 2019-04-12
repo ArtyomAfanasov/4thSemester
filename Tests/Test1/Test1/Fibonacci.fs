@@ -2,7 +2,7 @@
 module FibonacciNumber
 
 /// Сумма чисел Фибоначчи, не превосходящих 1000000.
-let SumOfOddFibonacciNumberLessThen1000000 () =    
+let sumOfOddFibonacciNumberLessThen1000000 () =    
     let supremum = 1000000
     let rec loop beforeLastNumber previousNumber acc =            
         match (beforeLastNumber, previousNumber) with
@@ -17,7 +17,7 @@ let SumOfOddFibonacciNumberLessThen1000000 () =
     loop 0 1 0 
 
 /// Тест. Сумма чётных чисел Фибоначчи, не превосходящих `sup`.
-let SumOfOddFibonacciNumberLessThenSupremumTest supremum =      
+let sumOfOddFibonacciNumberLessThenSupremumTest supremum =      
     let rec loop beforeLastNumber previousNumber acc =            
         match (beforeLastNumber, previousNumber) with
         | _ when beforeLastNumber + previousNumber > supremum -> acc             
@@ -31,7 +31,7 @@ let SumOfOddFibonacciNumberLessThenSupremumTest supremum =
     loop 0 1 0 
 
 /// Тест. Сумма всех чисел Фибоначчи, не превосходящих `sup`.
-let SumOfAllFibonacciNumberLessThenSupremumTest supremum=      
+let sumOfAllFibonacciNumberLessThenSupremumTest supremum=      
     let rec loop beforeLastNumber previousNumber acc =            
         match (beforeLastNumber, previousNumber) with
         | _ when beforeLastNumber + previousNumber > supremum -> acc             
