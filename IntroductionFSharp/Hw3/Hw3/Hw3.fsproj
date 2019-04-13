@@ -6,8 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="TestSrArimf.fs" />
-    <Compile Include="ForTest1.fs" />
     <Compile Include="EvenNumberInList.fs" />
   </ItemGroup>
 
