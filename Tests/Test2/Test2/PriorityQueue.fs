@@ -30,18 +30,3 @@ type 'a MyQueue =
         match this with
         | Empty -> failwith "Queue is empty"
         | MyQueue(firstEl, tail) -> (firstEl, tail)            
-    
-
-    (*member this.maxPriority ueue=
-       
-    member this.minPriority = 
-        ()
-        
-    member this.Priority el = 
-        ()             *)        
-  
-[<EntryPoint>]
-let main argv =
-    
-
-    0 // return an integer exit code
