@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Mergesort.fs" />
     <Compile Include="Palindrome.fs" />
     <Compile Include="FirstEntry.fs" />
   </ItemGroup>
