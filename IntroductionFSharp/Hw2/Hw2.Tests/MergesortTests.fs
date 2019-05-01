@@ -20,8 +20,8 @@ type MergesortTestsClass () =
         splitOnTwo [] |> should equal ([], []) 
         
     [<Test>]
-    member this.``sortAndMergeTwoLists on data [5; 3; 4] [10; 8] should return [3; 4; 5; 8; 10]`` () =
-        sortAndMergeTwoLists [5; 3; 4] [10; 8] |> should equal [3; 4; 5; 8; 10]
+    member this.``sortAndMergeTwoLists on data [3; 5; 8] [1; 10] should return [1; 3; 5; 8; 10]`` () =
+        sortAndMergeTwoLists [3; 5; 8] [1; 10] |> should equal [1; 3; 5; 8; 10]
 
     // ===============================================TestTest=======================
     
