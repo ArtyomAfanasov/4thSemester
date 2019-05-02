@@ -11,7 +11,7 @@ let splitOnTwo list =
 
     loop list [] []    
 
-/// Сортировать и слить два массива.
+/// Сортировать и слить два списка.
 let sortAndMergeTwoLists first second =
     let rec loop first second sortedList =
         match first, second with 
@@ -25,3 +25,21 @@ let sortAndMergeTwoLists first second =
         | [], [] -> List.rev sortedList
             
     loop first second []   
+
+/// Sort list by mergesort
+let mergesort list =  
+    match list with 
+    | head :: t when typeof<string> = head.GetType() -> failwith "It dosn't work with string."
+    | head :: t when typeof<bool> = head.GetType() -> failwith "It dosn't work with bool."
+    | head :: t when typeof<char> = head.GetType() -> failwith "It dosn't work with char."      
+    | [] -> []
+    | _ -> 
+        let rec localMergesort list =
+            match list with 
+            | [temp] -> [temp]
+            | h :: t ->
+                let left, right = splitOnTwo list
+        
+                sortAndMergeTwoLists (localMergesort left) (localMergesort right) 
+        
+        localMergesort list
