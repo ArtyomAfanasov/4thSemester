@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ArithmeticExpressionParseTree.Tests.fs" />
     <Compile Include="NewTree.Tests.fs" />
     <Compile Include="EvenNumberInList.Tests.fs" />
   </ItemGroup>
