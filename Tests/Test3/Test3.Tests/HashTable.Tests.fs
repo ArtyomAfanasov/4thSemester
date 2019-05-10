@@ -13,7 +13,14 @@ type Test3TestClass () =
         
         let hashTable = HashTable (fun x -> x % 20)
         hashTable.AddElem 5 |> ignore
-        hashTable.IsExist 5 |> should equal true         
+        hashTable.IsExist 5 |> should equal true 
+        
+    [<Test>]
+    member this.``delete not existed elem`` () =
+        
+        let hashTable = HashTable (fun x -> x % 20)
+        hashTable.AddElem 5 |> ignore
+        (fun () -> hashTable.Delete 10 |> ignore) |> should throw typeof<Exception>
 
     [<Test>]
     member this.``delete elem`` () =
@@ -43,12 +50,4 @@ type Test3TestClass () =
         hashTable.AddElem 25 |> ignore
         
         hashTable.IsExist 5 |> should equal true 
-        hashTable.IsExist 25 |> should equal true         
-
-    [<Test>]
-    member this.``===-=`` () =
-        ()
-
-    [<Test>]
-    member this.``====--`` () =
-        ()
+        hashTable.IsExist 25 |> should equal true            
