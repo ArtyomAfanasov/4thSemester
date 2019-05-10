@@ -24,7 +24,7 @@ type Test3TestClass () =
         hashTable.IsExist 7 |> should equal false
 
     [<Test>]
-    member this.``addElement x3`` () =
+    member this.``addElement x4`` () =
         let hashTable = HashTable (fun x -> x % 20)
         hashTable.AddElem 5 |> ignore
         hashTable.AddElem 7 |> ignore
@@ -32,6 +32,9 @@ type Test3TestClass () =
         hashTable.IsExist 5 |> should equal true 
         hashTable.IsExist 7 |> should equal true 
         hashTable.IsExist 9 |> should equal true 
+
+        hashTable.AddElem 25 |> ignore
+        hashTable.IsExist 25 |> should equal true
 
     [<Test>]
     member this.``same key`` () =

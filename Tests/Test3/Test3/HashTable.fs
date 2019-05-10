@@ -10,10 +10,10 @@ type HashTable (hashFunc : int -> int) =
         
     let convertFuncion hashFunc =
         ()    
-
+   
     let isKeyExist elem =
         let hashKey = hashFunc elem
-        //listStore.Exists (fun couple -> subList.Item(0) = hashKey)
+        
         listStore.Exists (fun couple -> 
             let left, right = couple
             left = hashKey)
@@ -33,21 +33,7 @@ type HashTable (hashFunc : int -> int) =
             let newSubList = new List<'a>()
             newSubList.Add(elem)
             listStore.Add(hashKey, newSubList)
-            //listStore.Item(listStore.Count).Add(hashKey)
-                                                                    (*| listStoreLength -> 
-                                                                        let newSubList = new List<'a>()
-                                                                        newSubList.Add(elem)
-                                                                        listStore.Add(newSubList)
-                                                                    | _ -> 
-                                                                        if (listStore.Item(step).Item = hashKey) then
-                                                                            listStore.Item(step).Add(elem)
-                                                                        else 
-                                                                            loop (step + 1)*)
             
-       
-        
-        //listStore.Item(hashKey)  
-
     let isExist elem =       
         let hashKey = hashFunc elem
         
@@ -70,8 +56,12 @@ type HashTable (hashFunc : int -> int) =
             let rec loop step =
                 match listStore.Item(step) with
                 | left, right when left = hashKey ->                    
-                    right.Exists (fun x -> x = elem)
-                    
+                    let rec innerLoop innerStep =
+                        match right.Item(innerStep) with
+                        | a when a = elem -> right.Remove(innerStep)
+                        | _ -> innerLoop (innerStep + 1)
+
+                    innerLoop 0                    
                 | _ -> loop (step + 1)
                 
             loop 0
