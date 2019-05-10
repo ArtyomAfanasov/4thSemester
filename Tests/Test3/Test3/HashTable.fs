@@ -9,9 +9,7 @@ type HashTable (hashFunc : int -> int) =
     let listStore = new List<int * List<'a>>()    
         
     let convertFuncion hashFunc =
-        (*match hashFunc with
-        | :? (string -> 'b)*)
-        ()    
+        ()
     
     /// Существует ли ключ для данного элемента.
     let isKeyExist elem =
