@@ -31,3 +31,23 @@ type ArithmeticExpressionParseTreeTestCalss () =
     [<Test>]
     member this.``calculateValue on Division(Value(7), Value(0) should return Exception`` () =
         (fun () -> calculateValue (Division (Value (7), Value (0))) |> ignore) |> should throw typeof<System.Exception>
+
+    [<Test>]
+    member this.``calculateValue on Division(Value(0), Value(0) should return Exception`` () =
+        (fun () -> calculateValue (Division (Value (0), Value (0))) |> ignore) |> should throw typeof<System.Exception>
+
+    [<Test>]
+    member this.``calculateValue on Division(Value(0), Value(7)) should not return Exception`` () =
+        calculateValue (Division(Value(0), Value(7))) |> should equal 0
+
+    [<Test>]
+    member this.``calculateValue on Plus(Value(7), Value(0) should not return Exception`` () =
+        calculateValue (Plus(Value(7), Value(0))) |> should equal 7
+
+    [<Test>]
+    member this.``calculateValue on Minus(Value(7), Value(0) should not return Exception`` () =
+        calculateValue (Minus(Value(7), Value(0))) |> should equal 7
+
+    [<Test>]
+    member this.``calculateValue on Multiply(Value(7), Value(0) should not return Exception`` () =
+        calculateValue (Multiply(Value(7), Value(0))) |> should equal 0    
