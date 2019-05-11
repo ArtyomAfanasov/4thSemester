@@ -30,4 +30,4 @@ type ArithmeticExpressionParseTreeTestCalss () =
    
     [<Test>]
     member this.``calculateValue on Division(Value(7), Value(0) should return Exception`` () =
-        calculateValue (Division (Value (7), Value (0))) |> should throw typeof<System.Exception>
+        (fun () -> calculateValue (Division (Value (7), Value (0))) |> ignore) |> should throw typeof<System.Exception>
