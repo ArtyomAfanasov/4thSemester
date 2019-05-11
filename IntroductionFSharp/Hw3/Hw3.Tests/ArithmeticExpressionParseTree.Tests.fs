@@ -4,14 +4,6 @@ open NUnit.Framework
 open FsUnit
 open ArithmeticExpressionParseTree
 
-(*type ParseTree =
-    | Value of int
-    | Plus of ParseTree * ParseTree
-    | Minus of ParseTree * ParseTree    
-    | Division of ParseTree * ParseTree
-    | Multiply of ParseTree * ParseTree
-    | Pow of int * int*)
-
 [<TestFixture>]
 type ArithmeticExpressionParseTreeTestCalss () =
 
@@ -30,13 +22,12 @@ type ArithmeticExpressionParseTreeTestCalss () =
     [<Test>]
     member this.``calculateValue on Multiply(Value(5), Value(5) should return 25`` () = 
         calculateValue (Multiply(Value(5), Value(5))) |> should equal 25   
-
-    /// Complex test
+   
     [<Test>]
-    member this.``calculateValue on  should return 25`` () =
-        ()
-
-    /// Деление на нуль
+    member this.``calculateValue on Minus (Plus (Multiply (Value (2), Value (4)), Division (Value (9), Value (3))), Division (Multiply (Value (4), Value (5)), Value (2))) should return 1`` () =
+        calculateValue (Minus (Plus (Multiply (Value (2), Value (4)), Division (Value (9), Value (3))), Division (Multiply (Value (4), Value (5)), Value (2))))
+        |> should equal 1
+   
     [<Test>]
     member this.``calculateValue on Division(Value(7), Value(0) should return Exception`` () =
-        ()
+        calculateValue (Division (Value (7), Value (0))) |> should throw typeof<System.Exception>

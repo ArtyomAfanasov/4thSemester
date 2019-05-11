@@ -24,7 +24,7 @@ type EvenNumberInListTestClass () =
         countEvenNumberBySeqFilter [1; 3; 5] |> should equal 0
 
     // Такое название теста хорошее? Или лучше писать нечто такое: 
-    // "Функция на списке из нескольких одинаковых чётных элементов должна бросать исключение"?
+    // "Функция на списке из 6 одинаковых чётных элементов должна возвращать 5"?
     [<Test>]
     member this.``countEvenNumberBySeqFilter on data [6; 6; 6; 6; 6] should return 5`` () =
         countEvenNumberBySeqFilter [6; 6; 6; 6; 6] |> should equal 5
