@@ -6,19 +6,6 @@ open PrimeInfinity
 
 [<TestFixture>]
 type SimpleInfinityTestClass () =         
-
-    [<Test>]
-    member this.``Test for me. Show first 100 elements`` () =
-        let primeInf = generatePrimeInfinity ()
-
-        let rec loopPrint step =
-            match step with 
-            | 100 -> ()
-            | _ -> 
-                printfn "%i: число %d " (step + 1) (Seq.item step primeInf)
-                loopPrint (step + 1)
-
-        loopPrint 0 |> ignore
     
     [<Test>]
     member this.``First 14 number should be prime.`` () =
@@ -70,14 +57,27 @@ type SimpleInfinityTestClass () =
             | _ when step < 5000 -> loop (step + 1) acc
             | _ -> acc
 
-        loop 0 0 |> should equal 1 
+        loop 0 0 |> should equal 1             
         
     [<Test>]
-    member this.``Crushtest on Euler's big prime number.`` () =
+    member this.``10000's numbers should be prime.`` () =
+        let primeInf = generatePrimeInfinity ()    
+
+        let rec loop step acc =
+            match step with            
+            | 9999 when (Seq.item step primeInf) = 104729 -> loop (step + 1) (acc + 1)            
+            | _ when step < 10001 -> loop (step + 1) acc
+            | _ -> acc
+
+        loop 0 0 |> should equal 1 
+
+    // Каждый раз считает элементы с начала до нужного => дооолго.
+    [<Test>]
+    member this.``14's number sould be prime `` () =
         let primeInf = generatePrimeInfinity ()    
         
         let rec loop step =                                
-            if (Seq.item step primeInf) = 2147483647 then 1                                              
+            if ((Seq.item step primeInf) = 43) then 1                                              
             else loop (step + 1)                
         
-        loop 0 |> should equal 1     
+        loop 0 |> should equal 1   
