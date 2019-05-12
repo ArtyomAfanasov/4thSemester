@@ -4,14 +4,6 @@ open NUnit.Framework
 open FsUnit
 open EvenNumberInList
 
-type Person =
-    { Name: string;
-    DateOfBirth: System.DateTime; }
-
-type IntOrBool = I of int | B of bool
-
-type C = Circle of int | Rectangle of int * int
-
 [<TestFixture>]
 type EvenNumberInListTestClass () =
     
@@ -66,47 +58,3 @@ type EvenNumberInListTestClass () =
     [<Test>]
     member this.``countEvenNumberBySeqMap on data [] should return 0`` () =
         countEvenNumberBySeqMap [] |> should equal 0      
-
-    // =================================TestTest ============================================
-
-    [<Test>]
-    member this.``TestTest.append without hole`` () =
-        let fSeq = {1..5}
-        let sSeq = {6..12}
-        Seq.append fSeq sSeq |> should equal {1..12}
-
-    [<Test>]
-    member this.``TestTest.append with hole`` () =
-        let fSeq = {1..5}
-        let sSeq = {8..12}
-        let res = Seq.append fSeq sSeq
-        Seq.iter (fun a -> printf "(%i) " a) res
-        ()
-
-    [<Test>]
-    member this.``TestTest.concat`` () =
-        let fSeq = {1..5}        
-        let strangeSeq = [ [| 1; 2; 3 |]; [| 4; 5; 6 |]; [|7; 8; 9|] ]
-        let seqResult = Seq.concat strangeSeq
-        Seq.iter (fun a -> printf "(%i) " a) seqResult
-        ()
-
-    [<Test>]
-    member this.``Records`` () =
-        let person = { Name = "Anna";
-            DateOfBirth = new System.DateTime(1968, 07, 23) }
-        let { Name = name; DateOfBirth = date} = person
-
-        let i = I 99
-        let b = B true
-
-        //Seq.iter (fun a -> printf "(%i) " a) (List.map Circle <| [1..10])
-        printfn "%A"  (List.map Circle <| [1..10])
-
-        let list = 
-            [1..10]
-            |> List.zip [21..30]
-            |> List.map Rectangle
-
-        printfn "%A" list
-        ()
