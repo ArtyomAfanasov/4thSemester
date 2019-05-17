@@ -2,10 +2,11 @@
 module ListMin
 
 /// Найти наименьший элемент в списке.
-let listMin list =
+let listMin list = 
     Seq.fold (fun elem acc -> 
-        acc) 0 list
-    System.NotImplementedException    
+        if elem < acc then
+            elem
+        else acc) 215336146 list    
 
 [<EntryPoint>]
 let main argv =   
