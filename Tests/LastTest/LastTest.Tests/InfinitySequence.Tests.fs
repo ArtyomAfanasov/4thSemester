@@ -5,8 +5,8 @@ open FsUnit
 open InfinitySequence
 
 [<TestFixture>]
-type InfinitySequenceTestClass () =
-
+type InfinitySequenceTestClass () =    
+       
     [<Test>]
     member this.``First 14 numbers should be correct.`` () =
         let seq = generateInfinitySequence ()       
@@ -27,15 +27,22 @@ type InfinitySequenceTestClass () =
             | _ when (Seq.item step seq) = 5 -> loop (step + 1) (acc + 1)
             | _ when (Seq.item step seq) = 5 -> loop (step + 1) (acc + 1)
             | _ when (Seq.item step seq) = 5 -> loop (step + 1) (acc + 1)
+            | _ when (Seq.item step seq) = 5 -> loop (step + 1) (acc + 1)
             | _ -> acc
 
-        loop 0 0 |> should equal 14   
-        
+        loop 0 0 |> should equal 15      
+
     [<Test>]
     member this.``3's numbers in seq should be 2.`` () =
         let seq = generateInfinitySequence ()           
 
         Seq.item 2 seq |> should equal 2
+
+    [<Test>]
+    member this.``4's numbers in seq should be 2.`` () =
+        let seq = generateInfinitySequence ()           
+
+        Seq.item 3 seq |> should equal 3
 
     [<Test>]
     member this.``325's numbers in seq should be 2.`` () =
