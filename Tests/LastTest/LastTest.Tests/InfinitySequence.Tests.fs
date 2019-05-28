@@ -36,3 +36,15 @@ type InfinitySequenceTestClass () =
             let seq = generateInfinitySequence ()           
 
             Seq.item 15 seq |> should equal 6
+
+    [<Test>]
+        member this.``18's numbers in seq should be 6.`` () =
+            let seq = generateInfinitySequence ()           
+
+            Seq.item 17 seq |> should equal 6
+
+    [<Test>]
+        member this.``5's numbers in seq should be 3.`` () =
+            let seq = generateInfinitySequence ()           
+
+            Seq.item 4 seq |> should equal 3
