@@ -8,10 +8,11 @@ let generateInfinitySequence () =
     |>
     Seq.unfold (fun (state, curIndex) ->                
         match curIndex with 
-        | _ when curIndex < (((1 + state) * state)/2) -> 
+        | _ when curIndex < (((1 + state) * state) / 2) -> 
             Some(state, (state, (curIndex + 1)))
-        | _ when curIndex = (((1 + state) * state)/2) -> 
+        | _ when curIndex = (((1 + state) * state) / 2) -> 
             Some(state, (state + 1, (curIndex + 1)))
+        | _ -> failwith "Never should get here"
         )
 
 [<EntryPoint>]
