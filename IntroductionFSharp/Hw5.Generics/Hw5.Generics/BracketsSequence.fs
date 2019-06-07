@@ -18,15 +18,21 @@ type ObjectType<'a> =
 ///
 /// Если какая-то из скобок не нужна, то задайте для неё пару значений char по умолчанию ('\u0000', '\u0000').
 /// ? Можно было бы сделать три функции, чтобы пользователь не заморачивался. Как лучше ?
-let checkBrackets (input : string) (firstValue : char* char) (secondValue : char* char) (thirdValue : char* char) =
+let checkBrackets (input : string) (firstValue : char * char) (secondValue : char * char) (thirdValue : char * char) =
     let openF, closeF = firstValue
     let openS, closeS = secondValue
     let openT, closeT = thirdValue
     
     // Из (()) получу ))((.
-    let listsOfOpenAndCloseValues =
-        Seq.fold (fun (firstList, secondList, thirdList)(*((listOpenF, listCloseF), (listOpenS, listCloseS), (listOpenT, listCloseT))*) elem ->
+    let listOfOpenAndCloseValues =
+        Seq.fold (fun bracketList(*, secondList, thirdList)*) elem ->
             match elem with 
+            | a when 
+                a = openF || a = closeF || 
+                a = openS || a = closeS || 
+                a = openT || a = closeT -> elem :: bracketList
+            | _ -> bracketList
+            (*
             | def when def = '\u0000' -> (firstList, secondList, thirdList)
             | a when a = openF -> (elem :: firstList, secondList, thirdList)
             | b when b = closeF -> (elem :: firstList, secondList, thirdList)
@@ -35,9 +41,23 @@ let checkBrackets (input : string) (firstValue : char* char) (secondValue : char
             | e when e = openT -> (firstList, secondList, elem :: thirdList)
             | f when f = closeT -> (firstList, secondList, elem :: thirdList)
             | _ -> (firstList, secondList, thirdList)
-           ) ([], [], []) input
+            *)
+           ) ([](*, [], []*)) input
     
-    let firstCouples, secondCouples, thirdCouples = listsOfOpenAndCloseValues
+    let rec checkBracketList list =        
+        match list with   
+        | [] -> true
+        | head :: tail -> 
+            if  head = closeF && List.last tail = openF ||
+                head = closeS && List.last tail = openS ||
+                head = closeT && List.last tail = openT then
+                    checkBracketList (List.rev (List.rev tail).Tail)                
+            else false
+
+    checkBracketList listOfOpenAndCloseValues
+
+    (*
+    let istsOfOpenAndCloseValues
         
     let rec loop list number =
         let checkList list openBr closeBr = 
@@ -54,6 +74,7 @@ let checkBrackets (input : string) (firstValue : char* char) (secondValue : char
         | 3 -> checkList list openT closeT 
 
     loop firstCouples 1 && loop secondCouples 2 && loop thirdCouples 3
+    *)
 
 
 
