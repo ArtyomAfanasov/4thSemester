@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Hw5.Generics", "Hw5.Generics\Hw5.Generics.fsproj", "{9922BF06-5D9B-4647-9850-1320F2C8EE26}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Hw5.Generics", "Hw5.Generics\Hw5.Generics.fsproj", "{9922BF06-5D9B-4647-9850-1320F2C8EE26}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Hw5.Generics.Tests", "Hw5.Generics.Tests\Hw5.Generics.Tests.fsproj", "{ABE90396-120A-48A5-92C7-E594C29993D1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Hw5.Generics.Tests", "Hw5.Generics.Tests\Hw5.Generics.Tests.fsproj", "{ABE90396-120A-48A5-92C7-E594C29993D1}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Tests", "Tests\Tests.fsproj", "{58C9E2F4-365A-44BB-BCBA-D2405B98D07E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{ABE90396-120A-48A5-92C7-E594C29993D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABE90396-120A-48A5-92C7-E594C29993D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABE90396-120A-48A5-92C7-E594C29993D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58C9E2F4-365A-44BB-BCBA-D2405B98D07E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58C9E2F4-365A-44BB-BCBA-D2405B98D07E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58C9E2F4-365A-44BB-BCBA-D2405B98D07E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58C9E2F4-365A-44BB-BCBA-D2405B98D07E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

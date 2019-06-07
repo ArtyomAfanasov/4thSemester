@@ -9,8 +9,10 @@ type BracketSequenceTestClass () =
     
     [<Test>]
     member this.``checkBrackets on data "((()))" should return true`` () =
-        checkBrackets "((()))" |> should equal true
+        checkBrackets ("((()))".ToCharArray()) (First('(', ')')) (Second(null, null)) (Third(null, null)) 
+        |> should equal true
 
+    (*
     [<Test>]
     member this.``checkBrackets on data "[[[]]]" should return true`` () =
         checkBrackets "[[[]]]" |> should equal true
@@ -74,3 +76,4 @@ type BracketSequenceTestClass () =
     [<Test>]
     member this.``checkBrackets on data "( asd" should return false`` () =
         checkBrackets "( asd" |> should equal false   
+    *)
