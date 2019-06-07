@@ -24,17 +24,17 @@ type ListMinTestClass () =
         listMin [0; 0; 0] |> should equal 0
 
     [<Test>]
-    member this.``listMin on ["string"] should throw Exception`` () =
-        (fun () -> listMin ["string"] |> ignore) |> should throw typeof<System.Exception>
+    member this.``listMin on ["a"; "b"; "c"] should return "a"`` () =
+        listMin ["c"; "b"; "a"] |> should equal "a"
 
     [<Test>]
-    member this.``listMin on ['c'] should throw Exception`` () =
-        (fun () -> listMin ['c'] |> ignore) |> should throw typeof<System.Exception>
+    member this.``listMin on ['a'; 'b'; 'c'] should return 'a'`` () =
+        listMin ['a'; 'b'; 'c'] |> should equal 'a'
 
     [<Test>]
-    member this.``listMin on [true] should throw Exception`` () =
-        (fun () -> listMin [true] |> ignore) |> should throw typeof<System.Exception>
+    member this.``listMin on [true; false] should return false`` () =
+        listMin [true; false] |> should equal false
 
     [<Test>]
-    member this.``listMin on () should throw Exception`` () =
-        (fun () -> listMin [()] |> ignore) |> should throw typeof<System.Exception>
+    member this.``listMin on [] should throw System.ArgumentException `` () =
+        (fun () -> listMin [] |> ignore) |>should throw typeof<System.ArgumentException>
