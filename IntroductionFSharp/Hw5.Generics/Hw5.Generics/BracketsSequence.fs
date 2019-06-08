@@ -44,8 +44,4 @@ let checkStringOnOpenAndCloseValues (input : string) (firstValue : char * char)
 
 /// Проверить корректность скобочной последовательности в данной строке. 
 let checkBrackets input =
-    checkStringOnOpenAndCloseValues input ('(', ')') ('[', ']') ('{', '}')
-    
-[<EntryPoint>]
-let main argv =         
-    0
+    checkStringOnOpenAndCloseValues input ('(', ')') ('[', ']') ('{', '}')    
