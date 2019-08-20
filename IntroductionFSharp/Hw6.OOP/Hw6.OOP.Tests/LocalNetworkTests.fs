@@ -8,7 +8,7 @@ open LocalNetwork
 [<TestFixture>]
 type LocalNetworkTests () =    
     /// Операционные системы
-    let _computers = [("1", "linux", true); 
+    let _computers = [|("1", "linux", true); 
                     ("2", "windows", false); 
                     ("3", "macos", false); 
                     ("4", "other", false); 
@@ -16,7 +16,7 @@ type LocalNetworkTests () =
                     ("6", "windows", false); 
                     ("7", "other", false); 
                     ("8", "macos", false); 
-                    ("9", "other", false)]
+                    ("9", "other", false)|]
 
     /// Все компьютеры соединены.
     let _fullConnections = array2D [[0; 1; 0; 1; 0; 0; 0; 0; 0];
@@ -51,9 +51,9 @@ type LocalNetworkTests () =
         loop 10
            
         // assert
-        List.fold (fun acc elem -> 
+        Seq.fold (fun acc elem -> 
                     if third elem then acc 
-                    else (acc + 1)) 0 (List.tail network.Computers)
+                    else (acc + 1)) 0 network.Computers
         |> should equal 8
     
     [<Test>]
@@ -71,7 +71,7 @@ type LocalNetworkTests () =
             let rec loop n =                
                 if n = 4 then ()
                 else 
-                    third (List.item (List.item n [1; 2; 4; 5]) epoch) |> should equal isIll
+                    third (Seq.item (List.item n [1; 2; 4; 5]) epoch) |> should equal isIll
                     loop (n + 1)
                 
             loop 0
@@ -80,7 +80,7 @@ type LocalNetworkTests () =
             let rec loop n =                
                 if n = 5 then ()
                 else 
-                    third (List.item (List.item n [3; 6; 7; 8; 9]) epoch) |> should equal isIll
+                    third (Seq.item (List.item n [3; 6; 7; 8; 9]) epoch) |> should equal isIll
                     loop (n + 1)
             
             loop 0
