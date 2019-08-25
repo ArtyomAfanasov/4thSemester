@@ -29,7 +29,7 @@ type LocalNetwork(computers : (string * string * bool)[], connections : int[,], 
     let _resistance = resistance
 
     /// Длина первого измерения (отвечает за соединение с другими ПК) двумерного массива соединений.   
-    let lengthOfConnections = Array2D.length1 _connections  
+    let lengthOfConnections = Array2D.length1 _connections
 
     /// Количество компьютеров в сети.
     let lengthOfComputers = _computers.Length 
@@ -41,32 +41,48 @@ type LocalNetwork(computers : (string * string * bool)[], connections : int[,], 
     let second (_, b, _) = b
 
     /// Получить третий элемент кортежа.
-    let third (_, _, c) = c
+    let third (_, _, c) = c   
+    
+    /// Попытаться заразить компьютер.
+    let tryInfect indexOfPrey preyInfo =         
+        _computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
 
-    /// Вирус заражает компьютеры, соединенные с данным.
-    let infect fromThisComputer =                
-        let rec checkVulnerabilitys index =
-            if index = lengthOfConnections ()
+    /// Найти компьютеры, соединенные с заражённым.
+    let checkConnections fromThisComputer =                
+        let rec loop index =
+            if index = lengthOfConnections then ()
             elif _connections.[fromThisComputer, index] = 1 then
-                let computerInfo = _computers.[index]
-                if third computerInfo then checkVulnerabilitys (index + 1)
+                
+                // Заразить жертву:
+                let preyInfo = _computers.[index]
+                if third preyInfo then loop (index + 1)
                 else 
-                    _computers.[index] <- (first computerInfo, second computerInfo, true)
-                    checkVulnerabilitys (index + 1)
-            else checkVulnerabilitys (index + 1)
+                    tryInfect index preyInfo
+                    
+                    //_computers.[index] <- (first computerInfo, second computerInfo, true)
+                    loop (index + 1)
+            else loop (index + 1)
         
-        checkVulnerabilitys 0
+        loop 0
+
+    ///// Найти компьютеры, заражённые с прошлой эпохи, либо с самого начала.
+    //let resetEpoch computers = 
+    //    Seq.choose (fun x -> 
+    //        if third x then Some(x)
+    //        else None) computers
 
     /// Новый этап жизни вируса в локальной сети.
     let newEpoch () = 
+        //let illComputers = findOldVirus _computers
+        
         let rec findPCWithVirus index = 
             if index = lengthOfComputers then ()
             else
                 if third (_computers.[index]) then
-                    infect index
+                    checkConnections index
                     findPCWithVirus (index + 1)
                 else findPCWithVirus (index + 1)
-
+                
         findPCWithVirus 0
     
     /// Новый этап жизни вируса в локальной сети.

@@ -67,33 +67,58 @@ type LocalNetworkTests () =
                             .Create()        
         let network = LocalNetwork(_computers, _fullConnections, resistance)
         
-        let checkVirusFirstSet isIll epoch = 
+        let checkVirusInFirstSet isIll epoch = 
             let rec loop n =                
-                if n = 4 then ()
+                if n = 3 then ()
                 else 
-                    third (Seq.item (List.item n [1; 2; 4; 5]) epoch) |> should equal isIll
+                    third (Seq.item (List.item n [0; 1; 3]) epoch) |> should equal isIll
                     loop (n + 1)
                 
             loop 0
 
-        let checkVirusSecondSet isIll epoch = 
+        let checkVirusInSecondSet isIll epoch = 
             let rec loop n =                
-                if n = 5 then ()
+                if n = 3 then ()
                 else 
-                    third (Seq.item (List.item n [3; 6; 7; 8; 9]) epoch) |> should equal isIll
+                    third (Seq.item (List.item n [2; 4; 6]) epoch) |> should equal isIll
                     loop (n + 1)
             
             loop 0
 
-        // act 
-        network.NewEpoch ()
-        let firstEpoch = network.Computers
-        network.NewEpoch ()
-        let secondEpoch = network.Computers
+        let checkVirusInThirdSet isIll epoch = 
+            let rec loop n =                
+                if n = 2 then ()
+                else 
+                    third (Seq.item (List.item n [5; 7]) epoch) |> should equal isIll
+                    loop (n + 1)
+            
+            loop 0
 
         // assert
-        checkVirusFirstSet true firstEpoch
-        checkVirusSecondSet false firstEpoch
+        network.NewEpoch ()
+        let firstEpoch = network.Computers
+        checkVirusInFirstSet true firstEpoch
+        checkVirusInSecondSet false firstEpoch
+        checkVirusInThirdSet false firstEpoch
+        Seq.item 8 firstEpoch |> should equal false
 
-        checkVirusFirstSet true secondEpoch
-        checkVirusSecondSet true secondEpoch
+        network.NewEpoch ()
+        let secondEpoch = network.Computers
+        checkVirusInFirstSet true secondEpoch
+        checkVirusInSecondSet true secondEpoch
+        checkVirusInThirdSet false secondEpoch
+        Seq.item 8 secondEpoch |> should equal false
+
+        network.NewEpoch ()
+        let thirdEpoch = network.Computers
+        checkVirusInFirstSet true thirdEpoch
+        checkVirusInSecondSet true thirdEpoch
+        checkVirusInThirdSet true thirdEpoch
+        Seq.item 8 thirdEpoch |> should equal false
+
+        network.NewEpoch ()
+        let fourthEpoch = network.Computers
+        checkVirusInFirstSet true fourthEpoch
+        checkVirusInSecondSet true fourthEpoch
+        checkVirusInThirdSet true fourthEpoch
+        Seq.item 8 fourthEpoch |> should equal true
