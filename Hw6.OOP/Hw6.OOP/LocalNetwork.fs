@@ -22,6 +22,9 @@ type LocalNetwork(computers : (string * string * bool)[], connections : int[,], 
     /// Список операционных систем в локальной сети.
     let mutable _computers = computers
 
+    /// Для избежания заражения через вновь заражённых.
+    let mutable supportInOrderToFindNewbie = Array.create _computers.Length bool
+
     /// Матрица смежности соединения компьютеров в локальной сети.
     let _connections = connections
 
@@ -65,11 +68,14 @@ type LocalNetwork(computers : (string * string * bool)[], connections : int[,], 
         
         loop 0
 
-    ///// Найти компьютеры, заражённые с прошлой эпохи, либо с самого начала.
-    //let resetEpoch computers = 
-    //    Seq.choose (fun x -> 
-    //        if third x then Some(x)
-    //        else None) computers
+    /// Найти компьютеры, заражённые с прошлой эпохи, либо с самого начала.
+    let resetSupportedArray () = 
+        let rec loop step =
+            if step = lengthOfComputers then ()
+            else 
+                supportInOrderToFindNewbie.[step] <- false
+                loop (step + 1)
+        loop 0
 
     /// Новый этап жизни вируса в локальной сети.
     let newEpoch () = 
