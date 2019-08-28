@@ -7,6 +7,7 @@ module SingleThreadedLazy
     type SingleThreadedLazy<'a> (supplier : unit -> 'a) =       
         /// Результат вычисления.
         [<DefaultValue>] val mutable result : 'a
+        
         /// Выполнено ли вычисление.
         let mutable isCalculated = false
 

@@ -10,8 +10,8 @@ module LazyFactory
         /// Однопоточная реализация lazy-объекта.
         static member CreateSingleThreadedLazy (supplier : unit -> 'a) = new SingleThreadedLazy<'a>(supplier)
 
-        /// Многопоточная реализация lazy-объекта.
-        //static member CreateSyncedMultithreadingLazy supplier = new SyncedMultithreadingLazy(supplier)
+        /// Многопоточная реализация lazy-объекта с синхронизацией.
+        static member CreateSyncedMultithreadingLazy (supplier : unit -> 'a) = new SyncedMultithreadingLazy<'a>(supplier)
 
         /// Многопоточная реализация lazy-объекта в lock-free стиле.
         //static member CreateLockFreeMultithreadingLazy supplier = new LockFreeMultithreadingLazy(supplier)
