@@ -6,7 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ILazy.fs" />
+    <Compile Include="LockFreeMultithreadingLazy.fs" />
+    <Compile Include="SyncedMultithreadingLazy.fs" />
     <Compile Include="SingleThreadedLazy.fs" />
+    <Compile Include="LazyFactory.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
 </Project>
