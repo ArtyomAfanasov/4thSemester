@@ -6,9 +6,43 @@ open StringCalculations
 
 [<TestFixture>]
 type StringCalculationsTestsClass () =
+    let calculate = new StringCalculationFlow()
+    
     [<Test>]
-    member this.``t`` () =
+    member this.``IntegerNumbersAsAStringShouldBeCalculated`` () =
         // act
+        let result = calculate {
+            let! x = "1"
+            let! y = "2"
+            let z = x + y
+            return z
+        }
 
         // assert
-        ()
+        result |> should equal "3" 
+    
+    [<Test>]
+    member this.``FloatNumbersAsAStringShouldBeCalculated`` () =
+        // act
+        let result = calculate {
+            let! x = "1.0"
+            let! y = "2.0"
+            let z = x + y
+            return z
+        }
+
+        // assert
+        result |> should equal calculate.ErrorMessage 
+    
+    [<Test>]
+    member this.``NotNumbersInStringShouldReturnErrorString`` () =
+        // act
+        let result = calculate {
+            let! x = "1"
+            let! y = "b"
+            let z = x + y
+            return z
+        }
+
+        // assert
+        result |> should equal calculate.ErrorMessage

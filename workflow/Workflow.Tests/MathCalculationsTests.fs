@@ -56,6 +56,19 @@ type MathCalculationsTestsClass () =
         result |> should equal 5.2
     
     [<Test>]
+    member this.``RoundingToOneSignForPowAndSqrt`` () =
+        // act
+        let result = 
+            rounding 1 { 
+                let! a = pown 3.0 2
+                let! b = sqrt a
+                return b
+                }
+
+        // assert
+        result |> should equal 3.0
+    
+    [<Test>]
     member this.``WithComputationalAccuracyArgumentMoreThan15ShouldFail`` () =
         // assert
         (fun () -> 
