@@ -19,7 +19,7 @@ type StringCalculationsTestsClass () =
         }
 
         // assert
-        result |> should equal "3" 
+        result.Value |> should equal 3
     
     [<Test>]
     member this.``FloatNumbersAsAStringShouldBeCalculated`` () =
@@ -32,7 +32,7 @@ type StringCalculationsTestsClass () =
         }
 
         // assert
-        result |> should equal calculate.ErrorMessage 
+        result |> should equal None
     
     [<Test>]
     member this.``NotNumbersInStringShouldReturnErrorString`` () =
@@ -45,4 +45,4 @@ type StringCalculationsTestsClass () =
         }
 
         // assert
-        result |> should equal calculate.ErrorMessage
+        result |> should equal None
