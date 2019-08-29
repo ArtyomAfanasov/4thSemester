@@ -1,7 +1,7 @@
 # Auto detect text files and perform LF normalization
 #* text=auto
 
-* text working-tree-encoding=CP1251
+*.fs text working-tree-encoding=ISO-8859
 
 # Custom for Visual Studio
 *.cs diff=csharp text
