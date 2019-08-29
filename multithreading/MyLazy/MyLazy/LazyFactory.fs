@@ -14,4 +14,4 @@ module LazyFactory
         static member CreateSyncedLazy (supplier : unit -> 'a) = new SyncedLazy<'a>(supplier)
 
         /// Многопоточная реализация lazy-объекта в lock-free стиле.
-        //static member CreateLockFreeLazy supplier = new LockFreeLazy(supplier)
+        static member CreateLockFreeLazy (supplier : unit -> 'a) = new LockFreeLazy<'a>(supplier)

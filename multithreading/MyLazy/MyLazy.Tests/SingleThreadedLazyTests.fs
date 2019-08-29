@@ -12,17 +12,17 @@ type SingleThreadedLazyTestClass () =
     // Это рефакторинг? :) Если не выносить, то получается копипаст аж в двух методах :)
     /// Вызвать метод Get у объекта типа, который реализуюет интерфейс ILazy.
     let invokeIntGetFrom (l : ILazy<int>) = l.Get ()     
-    
-    /// Объект однопоточной реализации lazy-объекта.
-    let singleLazy = Factory.CreateSingleThreadedLazy (fun () -> 5 + 5)    
-
+        
     [<Test>]
-    member this.``IntSingleLazyShouldCalculate5Plus5`` () =
+    member this.``IntSingleLazyShouldCalculateValue`` () =
+        // assert
+        let singleLazy = Factory.CreateSingleThreadedLazy (fun () -> 5)    
+        
         // act
         let result = invokeIntGetFrom singleLazy
 
         // assert
-        result |> should equal 10
+        result |> should equal 5
     
     [<Test>]
     member this.``SingleLazyShouldReturnCalculatedResultWithoutCalculation`` () =
@@ -59,9 +59,9 @@ type SingleThreadedLazyTestClass () =
     [<Test>]
     member this.``IsValueCalculatedPropertyShouldShowCorrectSituation`` () =
         // arrange
-        let invokeGetFrom (l : ILazy<int>) = l.Get ()                
-        let singleLazy = Factory.CreateSingleThreadedLazy (fun () -> 5)
-        
+        let invokeGetFrom (l : ILazy<int>) = l.Get ()                        
+        let singleLazy = Factory.CreateSingleThreadedLazy (fun () -> 5)    
+
         // assert
         singleLazy.IsValueCreated |> should equal false
         invokeGetFrom singleLazy |> ignore

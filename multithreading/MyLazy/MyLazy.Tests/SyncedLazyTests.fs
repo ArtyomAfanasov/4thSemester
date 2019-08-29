@@ -8,33 +8,33 @@ open System.Threading
 open System.Diagnostics
 
 [<TestFixture>]
-type SyncedMultithreadingLazyTestClass () =
+type SyncedLazyTestClass () =
     /// Вызвать метод Get у объекта типа, который реализуюет интерфейс ILazy.
     let invokeGetFrom (l : ILazy<int>) = l.Get ()
 
     [<Test>]
-    member this.``SyncedMultithreadingLazyShouldCalculate5Plus5`` () =
+    member this.``SyncedMultithreadingLazyShouldCalculateValue`` () =
         // assert
-        let SyncedLazy = Factory.CreateSyncedLazy(fun () -> 5 + 5)
+        let syncedLazy = Factory.CreateSyncedLazy(fun () -> 5)
         
         // act
-        let result = invokeGetFrom SyncedLazy
+        let result = invokeGetFrom syncedLazy
 
         // assert
-        result |> should equal 10
+        result |> should equal 5
 
     [<Test>]
     member this.``MultithreadingLazyShouldReturnCalculatedResultWithoutCalculation`` () =
         // assert
-        let SyncedLazy = Factory.CreateSyncedLazy (fun () -> 
+        let syncedLazy = Factory.CreateSyncedLazy (fun () -> 
             Thread.Sleep(10)
             5)
         
         // act
-        invokeGetFrom SyncedLazy |> ignore
+        invokeGetFrom syncedLazy |> ignore
 
         let stopwatch = Stopwatch.StartNew();
-        let result = invokeGetFrom SyncedLazy
+        let result = invokeGetFrom syncedLazy
         stopwatch.Stop()
 
         // assert
@@ -44,7 +44,7 @@ type SyncedMultithreadingLazyTestClass () =
     [<Test>]
     member this.``MultithreadingLazyShouldCalculateOneTimeWhen50Threads`` () =
         // arrange
-        let SyncedLazy = Factory.CreateSyncedLazy (fun () -> 
+        let syncedLazy = Factory.CreateSyncedLazy (fun () -> 
             
             // 50 мс должно ведь хватить, да? Где Вы читали, что на квант времени выделено 20-30 секунд, а потом происходит переключение контекста?
             // У .NET алгоритм переключение потоков располагает функцией передачи управления другому потоку, если данный поток выполнил свою работу за время,
@@ -57,7 +57,7 @@ type SyncedMultithreadingLazyTestClass () =
             5)
         let mutable result = 0
         let calculate () = 
-            result <- invokeGetFrom SyncedLazy            
+            result <- invokeGetFrom syncedLazy            
         let threads = Array.init 10 (fun index -> new Thread(calculate))        
 
         // act
@@ -77,10 +77,9 @@ type SyncedMultithreadingLazyTestClass () =
     [<Test>]
     member this.``IsValueCalculatedPropertyShouldShowCorrectSituation`` () =
         // arrange
-        let invokeGetFrom (l : ILazy<int>) = l.Get ()                
-        let SyncedLazy = Factory.CreateSyncedLazy (fun () -> 5)
+        let syncedLazy = Factory.CreateSyncedLazy (fun () -> 5)
             
         // assert
-        !SyncedLazy.IsValueCreated |> should equal false
-        invokeGetFrom SyncedLazy |> ignore
-        !SyncedLazy.IsValueCreated |> should equal true
+        !syncedLazy.IsValueCreated |> should equal false
+        invokeGetFrom syncedLazy |> ignore
+        !syncedLazy.IsValueCreated |> should equal true

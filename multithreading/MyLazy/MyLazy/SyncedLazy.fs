@@ -5,6 +5,9 @@
 
     /// Многопоточная реализация для lazy-объекта с синхронизацией.
     type SyncedLazy<'a> (supplier : unit -> 'a) =       
+        /// Для избавления от значения после выполнения вычисления.
+        let mutable calculation = Some(supplier)
+
         /// Результат вычисления.
         [<DefaultValue>] val mutable result : 'a
         
@@ -29,8 +32,11 @@
                     lock lockObj (fun () -> 
                         if !isValueCreated then this.result
                         else                 
-                            this.result <- (supplier ())    
+                            this.result <- (calculation.Value ())
                             Volatile.Write(isValueCreated, true)
+                            
+                            // JIT should not move next instruction before calling calculation, should it? Threrefore we do not need Volatile.Write here.
+                            calculation <- None
                             this.result)                   
                             
         /// Выполнено ли вычисление.

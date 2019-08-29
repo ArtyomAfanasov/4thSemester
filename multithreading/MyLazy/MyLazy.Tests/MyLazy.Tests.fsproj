@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="LockFreeLazyTests.fs" />
     <Compile Include="SyncedLazyTests.fs" />
     <Compile Include="SingleThreadedLazyTests.fs" />
   </ItemGroup>
