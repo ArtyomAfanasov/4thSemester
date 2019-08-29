@@ -43,7 +43,7 @@ type SyncedMultithreadingLazyTestClass () =
     
     [<Test>]
     member this.``MultithreadingLazyShouldCalculateOneTimeWhen50Threads`` () =
-        // assert
+        // arrange
         let SyncedMultithreadingLazy = Factory.CreateSyncedMultithreadingLazy (fun () -> 
             
             // 50 мс должно ведь хватить, да? Где Вы читали, что на квант времени выделено 20-30 секунд, а потом происходит переключение контекста?
@@ -73,3 +73,14 @@ type SyncedMultithreadingLazyTestClass () =
         // assert
         result |> should equal 5
         stopwatch.ElapsedMilliseconds |> should lessThan 60
+        
+    [<Test>]
+    member this.``IsValueCalculatedPropertyShouldShowCorrectSituation`` () =
+        // arrange
+        let invokeGetFrom (l : ILazy<int>) = l.Get ()                
+        let SyncedMultithreadingLazy = Factory.CreateSyncedMultithreadingLazy (fun () -> 5)
+            
+        // assert
+        !SyncedMultithreadingLazy.IsValueCreated |> should equal false
+        invokeGetFrom SyncedMultithreadingLazy |> ignore
+        !SyncedMultithreadingLazy.IsValueCreated |> should equal true

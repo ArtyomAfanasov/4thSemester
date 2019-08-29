@@ -15,7 +15,3 @@ module LazyFactory
 
         /// Многопоточная реализация lazy-объекта в lock-free стиле.
         //static member CreateLockFreeMultithreadingLazy supplier = new LockFreeMultithreadingLazy(supplier)
-
-    [<EntryPoint>]
-    let main a =
-        0

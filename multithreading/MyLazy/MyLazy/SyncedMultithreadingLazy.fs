@@ -9,7 +9,7 @@
         [<DefaultValue>] val mutable result : 'a
         
         /// Выполнено ли вычисление.
-        let isCalculated = ref false
+        let isValueCreated = ref false
 
         /// Объект для синхронизации вычисления. 
         let lockObj = new System.Object()
@@ -24,11 +24,14 @@
 
         interface ILazy<'a> with
             member this.Get () =
-                if !isCalculated then this.result
+                if !isValueCreated then this.result
                 else
                     lock lockObj (fun () -> 
-                        if !isCalculated then this.result
+                        if !isValueCreated then this.result
                         else                 
                             this.result <- (supplier ())    
-                            Volatile.Write(isCalculated, true)
-                            this.result)                                    
+                            Volatile.Write(isValueCreated, true)
+                            this.result)                   
+                            
+        /// Выполнено ли вычисление.
+        member this.IsValueCreated = isValueCreated

@@ -55,3 +55,14 @@ type SingleThreadedLazyTestClass () =
 
         // assert
         result |> should equal "I'm work!"
+    
+    [<Test>]
+    member this.``IsValueCalculatedPropertyShouldShowCorrectSituation`` () =
+        // arrange
+        let invokeGetFrom (l : ILazy<int>) = l.Get ()                
+        let singleLazy = Factory.CreateSingleThreadedLazy (fun () -> 5)
+        
+        // assert
+        singleLazy.IsValueCreated |> should equal false
+        invokeGetFrom singleLazy |> ignore
+        singleLazy.IsValueCreated |> should equal true

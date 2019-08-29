@@ -9,12 +9,15 @@ module SingleThreadedLazy
         [<DefaultValue>] val mutable result : 'a
         
         /// Выполнено ли вычисление.
-        let mutable isCalculated = false
+        let mutable isValueCreated = false
 
         interface ILazy<'a> with
             member this.Get () =
-                if isCalculated then this.result
+                if isValueCreated then this.result
                 else                 
                     this.result <- (supplier ())    
-                    isCalculated <- true
+                    isValueCreated <- true
                     this.result
+
+        /// Выполнено ли вычисление.
+        member this.IsValueCreated = isValueCreated
