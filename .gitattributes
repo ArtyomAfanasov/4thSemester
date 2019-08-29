@@ -1,7 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-* encoding=UTF-8
+* encoding=RUS-ASCII
 
 # Custom for Visual Studio
 *.cs diff=csharp text
