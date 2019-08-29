@@ -15,10 +15,10 @@ type SyncedMultithreadingLazyTestClass () =
     [<Test>]
     member this.``SyncedMultithreadingLazyShouldCalculate5Plus5`` () =
         // assert
-        let SyncedMultithreadingLazy = Factory.CreateSyncedMultithreadingLazy<int>(fun () -> 5 + 5)
+        let SyncedLazy = Factory.CreateSyncedLazy(fun () -> 5 + 5)
         
         // act
-        let result = invokeGetFrom SyncedMultithreadingLazy
+        let result = invokeGetFrom SyncedLazy
 
         // assert
         result |> should equal 10
@@ -26,15 +26,15 @@ type SyncedMultithreadingLazyTestClass () =
     [<Test>]
     member this.``MultithreadingLazyShouldReturnCalculatedResultWithoutCalculation`` () =
         // assert
-        let SyncedMultithreadingLazy = Factory.CreateSyncedMultithreadingLazy (fun () -> 
+        let SyncedLazy = Factory.CreateSyncedLazy (fun () -> 
             Thread.Sleep(10)
             5)
         
         // act
-        invokeGetFrom SyncedMultithreadingLazy |> ignore
+        invokeGetFrom SyncedLazy |> ignore
 
         let stopwatch = Stopwatch.StartNew();
-        let result = invokeGetFrom SyncedMultithreadingLazy
+        let result = invokeGetFrom SyncedLazy
         stopwatch.Stop()
 
         // assert
@@ -44,7 +44,7 @@ type SyncedMultithreadingLazyTestClass () =
     [<Test>]
     member this.``MultithreadingLazyShouldCalculateOneTimeWhen50Threads`` () =
         // arrange
-        let SyncedMultithreadingLazy = Factory.CreateSyncedMultithreadingLazy (fun () -> 
+        let SyncedLazy = Factory.CreateSyncedLazy (fun () -> 
             
             // 50 мс должно ведь хватить, да? Где Вы читали, что на квант времени выделено 20-30 секунд, а потом происходит переключение контекста?
             // У .NET алгоритм переключение потоков располагает функцией передачи управления другому потоку, если данный поток выполнил свою работу за время,
@@ -57,7 +57,7 @@ type SyncedMultithreadingLazyTestClass () =
             5)
         let mutable result = 0
         let calculate () = 
-            result <- invokeGetFrom SyncedMultithreadingLazy            
+            result <- invokeGetFrom SyncedLazy            
         let threads = Array.init 10 (fun index -> new Thread(calculate))        
 
         // act
@@ -78,9 +78,9 @@ type SyncedMultithreadingLazyTestClass () =
     member this.``IsValueCalculatedPropertyShouldShowCorrectSituation`` () =
         // arrange
         let invokeGetFrom (l : ILazy<int>) = l.Get ()                
-        let SyncedMultithreadingLazy = Factory.CreateSyncedMultithreadingLazy (fun () -> 5)
+        let SyncedLazy = Factory.CreateSyncedLazy (fun () -> 5)
             
         // assert
-        !SyncedMultithreadingLazy.IsValueCreated |> should equal false
-        invokeGetFrom SyncedMultithreadingLazy |> ignore
-        !SyncedMultithreadingLazy.IsValueCreated |> should equal true
+        !SyncedLazy.IsValueCreated |> should equal false
+        invokeGetFrom SyncedLazy |> ignore
+        !SyncedLazy.IsValueCreated |> should equal true

@@ -1,10 +1,10 @@
-﻿module SyncedMultithreadingLazy
+﻿module SyncedLazy
 
     open ILazy
     open System.Threading
 
     /// Многопоточная реализация для lazy-объекта с синхронизацией.
-    type SyncedMultithreadingLazy<'a> (supplier : unit -> 'a) =       
+    type SyncedLazy<'a> (supplier : unit -> 'a) =       
         /// Результат вычисления.
         [<DefaultValue>] val mutable result : 'a
         

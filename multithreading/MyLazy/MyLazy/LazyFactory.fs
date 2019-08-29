@@ -2,8 +2,8 @@
 module LazyFactory
 
     open SingleThreadedLazy
-    open SyncedMultithreadingLazy
-    open LockFreeMultithreadingLazy
+    open SyncedLazy
+    open LockFreeLazy
 
     /// Фабрика lazy-объектов.
     type Factory() =
@@ -11,7 +11,7 @@ module LazyFactory
         static member CreateSingleThreadedLazy (supplier : unit -> 'a) = new SingleThreadedLazy<'a>(supplier)
 
         /// Многопоточная реализация lazy-объекта с синхронизацией.
-        static member CreateSyncedMultithreadingLazy (supplier : unit -> 'a) = new SyncedMultithreadingLazy<'a>(supplier)
+        static member CreateSyncedLazy (supplier : unit -> 'a) = new SyncedLazy<'a>(supplier)
 
         /// Многопоточная реализация lazy-объекта в lock-free стиле.
-        //static member CreateLockFreeMultithreadingLazy supplier = new LockFreeMultithreadingLazy(supplier)
+        //static member CreateLockFreeLazy supplier = new LockFreeLazy(supplier)
