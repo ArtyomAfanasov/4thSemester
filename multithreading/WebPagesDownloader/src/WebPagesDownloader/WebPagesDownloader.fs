@@ -25,9 +25,13 @@ module WebPagesDownloader
                     use! response = request.AsyncGetResponse() 
                     do printfn "Getting response stream for %s..." url
                     use stream = response.GetResponseStream()
-                    do printfn "Reading response for %s..." url
-                    use reader = new StreamReader(stream)
-                    return reader.ReadToEnd()
+                    if stream = null then 
+                        printf "Stream from response is null. Exit from downloading process."
+                        return "-1"
+                    else 
+                        do printfn "Reading response for %s..." url
+                        use reader = new StreamReader(stream)
+                        return reader.ReadToEnd()
                 with 
                 | :? System.Security.SecurityException as e ->
                     printfn "%s" e.Message
@@ -36,9 +40,6 @@ module WebPagesDownloader
                     printfn "%s" e.Message
                     return "-1"
                 | :? System.NotSupportedException as e ->
-                    printfn "%s" e.Message
-                    return "-1"
-                | :? System.ArgumentNullException as e -> 
                     printfn "%s" e.Message
                     return "-1"
                 | :? System.ArgumentException as e ->
@@ -60,23 +61,23 @@ module WebPagesDownloader
                     let captures = match'.Captures
                     for capture in captures do   
                         pagesList.Add (normalizeUrl.Replace(capture.Value, System.String.Empty))
-                else printfn "No internal pages here."    
             pagesList
 
         /// Вывести данные о внутренних страницах.
-        let printSize pagesList = 
-            pagesList
-            |> Seq.map (fun url -> 
-                async {
-                    let! html = downloadHtml url
-                    match html with
-                    | x when x = url + " not found" -> printfn "%s not found" url
-                    | _ -> 
-                        do printfn "%s --- %i" url html.Length
-                })
-            |> Async.Parallel            
-            |> Async.RunSynchronously
-            |> ignore
+        let printSize (pagesList : List<string>) = 
+            if pagesList.Count = 0 then printf "No internal pages here."  
+            else
+                pagesList
+                |> Seq.map (fun url -> 
+                    async {
+                        let! html = downloadHtml url
+                        match html with
+                        | "-1" -> printfn "Exit from `PrintSizeOfAllInnerWebPages` method."
+                        | _ -> do printfn "%s --- %i" url html.Length
+                    })
+                |> Async.Parallel            
+                |> Async.RunSynchronously
+                |> ignore
 
         /// Вывести все пары `(адрес страницы * число символов)` для веб-страниц, указанных в данной.
         let printSizeOfAllInnerWebPages url =
@@ -84,7 +85,7 @@ module WebPagesDownloader
                 do printfn "Let's do this with %s!" url
                 let! mainHtml = downloadHtml url
                 match mainHtml with
-                | "-1" -> printfn "Exit."
+                | "-1" -> printfn "Exit from `PrintSizeOfAllInnerWebPages` method."
                 | _ ->            
                     let innerPages = matchHtml mainHtml (new List<string>())
     
