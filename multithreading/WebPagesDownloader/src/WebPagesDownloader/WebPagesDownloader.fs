@@ -14,14 +14,14 @@ module WebPagesDownloader
         let findInnerWebPages = new Regex(@"a href=""http://(\S*)""")
         
         /// Нормализовать найденный шаблон `a href="http://..."` до `http://...`
-        let normalizeUrl = new Regex(@"a href=|""")
-    
+        let normalizeUrl = new Regex(@"a href=|""")        
+
         /// Скачать html.
         let downloadHtml url = 
             async {
                 do printfn "Creating request for %s..." url
-                let request = WebRequest.Create(url)
-                try
+                try                
+                    let request = WebRequest.Create(url)
                     use! response = request.AsyncGetResponse() 
                     do printfn "Getting response stream for %s..." url
                     use stream = response.GetResponseStream()
@@ -29,11 +29,27 @@ module WebPagesDownloader
                     use reader = new StreamReader(stream)
                     return reader.ReadToEnd()
                 with 
-                | :? System.Net.WebException -> 
-                    return url + " not found."
-                | :? System.Exception as e -> 
-                    do printfn "%s" e.Message
-                    return e.Message
+                | :? System.Security.SecurityException as e ->
+                    printfn "%s" e.Message
+                    return "-1"
+                | :? System.Net.WebException as e -> 
+                    printfn "%s" e.Message
+                    return "-1"
+                | :? System.NotSupportedException as e ->
+                    printfn "%s" e.Message
+                    return "-1"
+                | :? System.ArgumentNullException as e -> 
+                    printfn "%s" e.Message
+                    return "-1"
+                | :? System.ArgumentException as e ->
+                    printfn "%s" e.Message
+                    return "-1"
+                | :? System.OutOfMemoryException as e ->
+                    printfn "%s" e.Message
+                    return "-1"
+                | :? System.IO.IOException as e ->
+                    printfn "%s" e.Message
+                    return "-1"                
             }
 
         /// Применить регулярное выражение к html-коду страницы.
@@ -65,9 +81,10 @@ module WebPagesDownloader
         /// Вывести все пары `(адрес страницы * число символов)` для веб-страниц, указанных в данной.
         let printSizeOfAllInnerWebPages url =
             async {
+                do printfn "Let's do this with %s!" url
                 let! mainHtml = downloadHtml url
                 match mainHtml with
-                | x when x = url + " not found" -> printfn "%s not found" url
+                | "-1" -> printfn "Exit."
                 | _ ->            
                     let innerPages = matchHtml mainHtml (new List<string>())
     
@@ -78,13 +95,20 @@ module WebPagesDownloader
                     do printfn "That's all."
             }
 
+        /// Вывести сообщение об ошибке.
+        let printError message = 
+            async {
+                do printfn message
+            }   
+        
         /// Вывести все пары `(адрес страницы * число символов)` для веб-страниц, указанных в данной.
-        member this.PrintSizeOfAllInnerWebPages url = printSizeOfAllInnerWebPages url
+        member this.PrintSizeOfAllInnerWebPages url = 
+            if url = null then 
+                printError "Null is not allow."                
+            elif System.Uri.IsWellFormedUriString(url, System.UriKind.RelativeOrAbsolute) <> true then
+                printError "Uri is invalid."         
+            else printSizeOfAllInnerWebPages url
 
     [<EntryPoint>]
-    let main arg =  
-        let cs = WebPagesDownloader()
-        cs.PrintSizeOfAllInnerWebPages @"http://se.math.spbu.ru/SE"
-        |> Async.RunSynchronously
-        |> ignore
+    let main arg =          
         0
