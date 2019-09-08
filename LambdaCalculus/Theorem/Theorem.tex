@@ -1,0 +1,55 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+
+\begin{theorem}
+S K K = I.
+\end{theorem}
+
+
+\begin{proof}
+$$(\lambda x\;y\;z.x\;z\;(y\;z))\;\underline{(\lambda x\;y.x)\;(\lambda x\;y.x)}\;=\;\lambda x.x$$
+{\centering
+    \downarrow{\alpha, normal\;strategy}\par
+}
+
+$$(\underline{(\lambda x\;y\;z.x\;z\;(y\;z))\;(\lambda x'\;y'.x')})\;(\lambda x''\;y''.x'')\;=\;\lambda x.x$$
+{\centering
+    \downarrow{\beta}\par
+}
+
+$$\underline{(\lambda y\;z.(\lambda x'\;y'.x')\;z\;(y\;z))\;(\lambda x''\;y''.x''})\;=\;\lambda x.x$$
+{\centering
+    \downarrow{\beta}\par
+}
+
+$$\lambda z.(\lambda x'\;y'.x')\;z\;((\lambda x''\;y''.x'')\;z)\;=\;\lambda x.x$$
+{\centering
+    \downarrow{normal\;strategy}\par
+}
+
+$$\lambda z.(\underline{(\lambda x'\;y'.x')\;z})\;((\lambda x''\;y''.x'')\;z)\;=\;\lambda x.x$$
+{\centering
+    \downarrow{\beta}\par
+}
+
+$$\lambda z.\undeline{(\lambda y'.z)\;((\lambda x''\;y''.x'')\;z)}\;=\;\lambda x.x$$
+{\centering
+    \downarrow{\beta}\par
+}
+
+$$\underline{\lambda z.z}\;=\;\lambda x.x$$
+{\centering
+    \downarrow{\alpha}\par
+}
+
+$$\lambda x.x\;=\;\lambda x.x$$
+\end{proof}
+
+\end{document}
