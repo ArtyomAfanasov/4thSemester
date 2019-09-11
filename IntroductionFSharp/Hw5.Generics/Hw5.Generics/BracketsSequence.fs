@@ -3,45 +3,37 @@
 /// Скобки бывают трёх видов.
 module BracketSequence 
 
-/// Проверить список с закрывающими и открывающими значениями на корректность
-/// их расположения.
-let checkBracketList list openF closeF openS closeS openT closeT  =
-    let rec loop list =        
-        match list with   
-        | [] -> true
-        | head :: tail -> 
-            if  head = closeF && List.last tail = openF ||
-                head = closeS && List.last tail = openS ||
-                head = closeT && List.last tail = openT then
-                    loop (List.rev (List.rev tail).Tail)                
-            else false
+open System.Collections.Generic
 
-    loop list
+/// Закрывающие скобки.
+let closedBrackets = 
+    let innerDict = new Dictionary<char, char>()
+    innerDict.Add(')', '(')
+    innerDict.Add('}', '{')
+    innerDict.Add(']', '[')
+    innerDict.Add('>', '<')
+    innerDict
 
-/// Проверить корректность последовательности выбранных символов.
-/// Первый элемент пары - это открывающий символ. Второй - закрывающий.
-///
-/// Если какой-то из вариантов не нужен, 
-/// то задайте для него пару значений char по умолчанию ('\u0000', '\u0000').
-let checkStringOnOpenAndCloseValues (input : string) (firstValue : char * char) 
-    (secondValue : char * char) (thirdValue : char * char) =
-    let openF, closeF = firstValue
-    let openS, closeS = secondValue
-    let openT, closeT = thirdValue  
+/// Закрывающие скобки.
+let openedBrackets = 
+    let innerList = new List<char>()
+    innerList.Add('(')
+    innerList.Add('[')
+    innerList.Add('{')
+    innerList.Add('<')
+    innerList
+
+/// Проверить корректность скобочной последовательности.
+let checkBrackets (input : string) = 
+    let stack = Stack<char>()
     
-    // Из (()) получу ))((.
-    let listOfOpenAndCloseValues =
-        Seq.fold (fun bracketList elem ->
-            match elem with 
-            | a when 
-                a = openF || a = closeF || 
-                a = openS || a = closeS || 
-                a = openT || a = closeT -> elem :: bracketList
-            | _ -> bracketList            
-           ) [] input
-    
-    checkBracketList listOfOpenAndCloseValues openF closeF openS closeS openT closeT
+    String.iter (fun elem -> 
+        if closedBrackets.ContainsKey elem || openedBrackets.Contains elem then        
+            if stack.Count = 0 then stack.Push elem            
+            elif openedBrackets.Contains elem then stack.Push(elem)            
+            elif closedBrackets.Item elem = stack.Peek() then
+                stack.Pop() |> ignore
+            else stack.Push elem
+        else ()) input
 
-/// Проверить корректность скобочной последовательности в данной строке. 
-let checkBrackets input =
-    checkStringOnOpenAndCloseValues input ('(', ')') ('[', ']') ('{', '}')    
+    stack.Count = 0
