@@ -14,3 +14,7 @@ type InterpreterTestClass () =
     [<Test>]
     member this.``For (lambda x y z.x z (y z)) (lambda x y.x) (lambda x y.x) should return (lambda x.x)`` () =
         ()
+
+    [<Test>]
+    member this.``test`` () =
+        ()
