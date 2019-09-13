@@ -1,23 +1,21 @@
 ﻿module Interpreter
 
     // ((λa.(λb.b b) (λb.b b)) b) ((λc.(c b)) (λa.a))
-    type LambdaTree<'a> =                   
-        | Test of 'a
-        | LambdaArgument of LambdaTree<'a>
-        | AbstractArgument of LambdaTree<'a> ref
-        | Lambda of LambdaTree<'a>
+    type Token =                   
+        | Variable of string
+        | LBracket
+        | RBracket
+        | Dot
+        | Lambda
 
-    let normalize lambda =
-        let rec loop =
+    let normalize (lambda : Token) =
+        let rec loop tokens =
             ()
         loop
 
+    // ToDo кол-во проходов = кол-во бета-редукций. Запоминать место с точкой, идти до первого аргумента, 
+    // Возобновлять проход от точки до донца.
+
     [<EntryPoint>]
     let main arg =
-        let a = Lambda(LambdaArgument(AbstractArgument(ref (AbstractArgument(ref ((Test("a"))))))))
-        printfn "%A" a  
-        match a with 
-        | Lambda(LambdaArgument(x)) -> !x <- AbstractArgument(ref (AbstractArgument(ref ((Test("a"))))))
-            
-        printfn "%A" a  
         0
