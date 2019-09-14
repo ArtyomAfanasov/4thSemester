@@ -6,31 +6,19 @@ module BracketSequence
 open System.Collections.Generic
 
 /// Закрывающие скобки.
-let closedBrackets = 
-    let innerDict = new Dictionary<char, char>()
-    innerDict.Add(')', '(')
-    innerDict.Add('}', '{')
-    innerDict.Add(']', '[')
-    innerDict.Add('>', '<')
-    innerDict
+let closedBrackets = Map.ofList [ (')', '('); ('}', '{'); (']', '['); ('>', '<') ]  
 
 /// Закрывающие скобки.
-let openedBrackets = 
-    let innerList = new List<char>()
-    innerList.Add('(')
-    innerList.Add('[')
-    innerList.Add('{')
-    innerList.Add('<')
-    innerList
+let openedBrackets = ['('; '['; '{'; '<']    
 
 /// Проверить корректность скобочной последовательности.
 let checkBrackets (input : string) = 
     let stack = Stack<char>()
     
     String.iter (fun elem -> 
-        if closedBrackets.ContainsKey elem || openedBrackets.Contains elem then        
+        if closedBrackets.ContainsKey elem || List.contains elem openedBrackets then        
             if stack.Count = 0 then stack.Push elem            
-            elif openedBrackets.Contains elem then stack.Push(elem)            
+            elif List.contains elem openedBrackets then stack.Push(elem)            
             elif closedBrackets.Item elem = stack.Peek() then
                 stack.Pop() |> ignore
             else stack.Push elem
