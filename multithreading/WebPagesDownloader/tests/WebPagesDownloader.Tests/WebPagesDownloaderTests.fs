@@ -5,12 +5,12 @@ open FsUnit
 open WebPagesDownloader
 
 [<TestFixture>]
-type WebPagesDownloaderTestsClass () =
+type WebPagesDownloaderTestsClass () =    
     [<Test>]
-    member this.``t`` () =
+    member this.``Template`` () =
         // arrange
         
         // act
         
-        // assert
+        // assert 
         ()

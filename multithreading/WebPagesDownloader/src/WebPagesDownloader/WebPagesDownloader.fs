@@ -111,5 +111,12 @@ module WebPagesDownloader
             else printSizeOfAllInnerWebPages url
 
     [<EntryPoint>]
-    let main arg =          
+    let main arg =
+        let instance = WebPagesDownloader()
+        instance.PrintSizeOfAllInnerWebPages "http://se.math.spbu.ru/SE/2016/stipendiya-a.n.-terehova"
+        |> Async.Start
+        |> ignore
+
+        let checkForAsync = System.Console.ReadLine()
+        printfn "%s" checkForAsync
         0
