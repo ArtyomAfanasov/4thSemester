@@ -122,3 +122,31 @@ type LocalNetworkTests () =
         checkVirusInSecondSet true computersInFourthEpoch
         checkVirusInThirdSet true computersInFourthEpoch
         Seq.item 8 computersInFourthEpoch |> third |> should equal true
+        
+    [<Test>]
+    member this.``Should show correct state with 0% resistance.`` () =
+        // arrange
+        let computersInfo = [|("1", "someos", true);
+                          ("2", "someos", false);
+                          ("3", "someos", false)|]
+
+        let connections = array2D [[0; 1; 0];
+                                   [1; 0; 1];
+                                   [0; 1; 0]]
+
+        let resistance = Mock<Resistance>()
+                            .Setup(fun x -> <@ x.LinuxResistance @>).Returns(0)
+                            .Setup(fun x -> <@ x.MacOSResistance @>).Returns(0)
+                            .Setup(fun x -> <@ x.WindowsResistance @>).Returns(0)
+                            .Setup(fun x -> <@ x.OtherOSResistance @>).Returns(0)
+                            .Create()
+        let network = LocalNetwork(computersInfo, connections, resistance)
+                
+        // assert
+        network.ShowState () |> should equal "1 someos True\n2 someos False\n3 someos False\n"
+
+        network.NewEpoch () 
+        network.ShowState () |> should equal "1 someos True\n2 someos True\n3 someos False\n"
+        
+        network.NewEpoch () 
+        network.ShowState () |> should equal "1 someos True\n2 someos True\n3 someos True\n"

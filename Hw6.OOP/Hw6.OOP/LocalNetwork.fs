@@ -133,17 +133,24 @@ type LocalNetwork(computers : (string * string * bool)[], connections : int[,], 
         findPCWithVirus 0
 
         noOneIsNewbieNow ()
+
+    /// Состояние сети.
+    let showState () = 
+        Seq.fold (fun state PC ->
+            (state + first PC + " " + second PC + " " + (third PC).ToString() + "\n")) "" _computers
     
     /// Новый этап жизни вируса в локальной сети.
     member this.NewEpoch() = newEpoch ()
 
     /// Информация о компьютерах: имя, OS, заражён ли.
-    member this.Computers =         
-        _computers
+    member this.Computers = _computers
+
+    /// Состояние сети.
+    member this.ShowState() = showState ()
     
     /// Инициализирует новый экземпляр класса LocalNetwork с сопротивлением к вирусам по умолчанию.
     new(computers : (string * string * bool)[], connections : int[,]) = LocalNetwork(computers, connections, DefaultResistance())        
         
 [<EntryPoint>]
-let main argv =    
+let main argv =       
     0
