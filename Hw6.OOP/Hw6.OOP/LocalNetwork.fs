@@ -53,50 +53,44 @@ type LocalNetwork(computers : (string * string * bool)[], connections : int[,], 
     /// Количество компьютеров в сети.
     let lengthOfComputers = _computers.Length  
 
-    // match dosn't see this names :/ 
-    // Good refactoring practice :)
-    // Linux ОС.
+    /// Linux ОС.
     let linux = "linux"
 
-    // Windows ОС.
+    /// Windows ОС.
     let windows = "windows"
 
-    // MacOS ОС.
+    /// MacOS ОС.
     let macos = "macos"
+
+    /// Другие ОС.
+    let other = "other"
+
+    /// Сопротивляемость ОС.
+    let OSResistance = Map.ofList [ ("linux", _resistance.LinuxResistance); 
+                                    ("windows", _resistance.WindowsResistance); 
+                                    ("macos", _resistance.MacOSResistance); 
+                                    ("other", _resistance.OtherOSResistance) ]  
     
+    /// Объект для случайных величин.
+    let random = System.Random()    
+
     /// Попытаться заразить компьютер.
     let tryInfect indexOfPrey preyInfo = 
-        // костыль. Здесь должна быть случайность!
-        // if _resistance.LinuxSusceptibility = 0.0 then
+        let innerAttemptInfection nameOfOS = 
+            let bigIsDangerous = random.Next(0,100)
+            if bigIsDangerous > OSResistance.Item nameOfOS then
+                _computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
+                isNewbie.[indexOfPrey] <- true
 
         match second preyInfo with
-        | "linux" -> 
-            let random = System.Random()
-            let bigIsDangerous = random.Next(0,100)
-            if bigIsDangerous > _resistance.LinuxResistance then
-                _computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
-                isNewbie.[indexOfPrey] <- true
-        | "windows" ->
-            let random = System.Random()
-            let bigIsDangerous = random.Next(0,100)
-            if bigIsDangerous > _resistance.WindowsResistance then
-                _computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
-                isNewbie.[indexOfPrey] <- true
-        | "macos" ->
-            let random = System.Random()
-            let bigIsDangerous = random.Next(0,100)
-            if bigIsDangerous > _resistance.MacOSResistance then
-                _computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
-                isNewbie.[indexOfPrey] <- true
+        | x when x = linux -> 
+            innerAttemptInfection linux
+        | x when x = windows ->
+            innerAttemptInfection windows
+        | x when x = macos ->
+            innerAttemptInfection macos
         | _ ->
-            let random = System.Random()
-            let bigIsDangerous = random.Next(0,100)
-            if bigIsDangerous > _resistance.OtherOSResistance then
-                _computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
-                isNewbie.[indexOfPrey] <- true
-
-        //_computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
-        //isNewbie.[indexOfPrey] <- true
+            innerAttemptInfection other
             
     /// Найти компьютеры, заражённые с прошлой эпохи, либо с самого начала.
     let noOneIsNewbieNow () = 
@@ -113,16 +107,12 @@ type LocalNetwork(computers : (string * string * bool)[], connections : int[,], 
         let rec loop index =
             if index = lengthOfConnections then ()
             elif _connections.[fromThisComputer, index] = 1 then                
-                //if isNewbie.[fromThisComputer] then loop (index + 1)
-                //else                     
 
                 // Попытаться заразить жертву:
                 let preyInfo = _computers.[index]
                 if third preyInfo then loop (index + 1)
                 else 
                     tryInfect index preyInfo
-                    
-                    //_computers.[index] <- (first computerInfo, second computerInfo, true)
                     loop (index + 1)
             else loop (index + 1)
         
