@@ -7,16 +7,16 @@ open Virus
 
 [<TestFixture>]
 type LocalNetworkTests () =    
-    /// Операционные системы
-    let _computers = [|("1", "linux", true); 
-                    ("2", "windows", false); 
-                    ("3", "macos", false); 
-                    ("4", "other", false); 
-                    ("5", "linux", false); 
-                    ("6", "windows", false); 
-                    ("7", "other", false); 
-                    ("8", "macos", false); 
-                    ("9", "other", false)|]
+    /// Информация о компьютерах.
+    let getComputers () = [|("1", "linux", true); 
+                            ("2", "windows", false); 
+                            ("3", "macos", false); 
+                            ("4", "other", false); 
+                            ("5", "linux", false); 
+                            ("6", "windows", false); 
+                            ("7", "other", false); 
+                            ("8", "macos", false); 
+                            ("9", "other", false)|]
 
     /// Все компьютеры соединены.
     let _fullConnections = array2D [[0; 1; 0; 1; 0; 0; 0; 0; 0];
@@ -36,12 +36,12 @@ type LocalNetworkTests () =
     member this.``With 100% resistance virus should not expand.`` () =
         // assert
         let resistance = Mock<Resistance>()
-                            .Setup(fun x -> <@ x.LinuxSusceptibility @>).Returns(0.0)
-                            .Setup(fun x -> <@ x.MacOSSusceptibility @>).Returns(0.0)
-                            .Setup(fun x -> <@ x.WindowsSusceptibility @>).Returns(0.0)
-                            .Setup(fun x -> <@ x.OtherOSSusceptibility @>).Returns(0.0)
+                            .Setup(fun x -> <@ x.LinuxResistance @>).Returns(100)
+                            .Setup(fun x -> <@ x.MacOSResistance @>).Returns(100)
+                            .Setup(fun x -> <@ x.WindowsResistance @>).Returns(100)
+                            .Setup(fun x -> <@ x.OtherOSResistance @>).Returns(100)
                             .Create()
-        let network = LocalNetwork(_computers, _fullConnections, resistance)
+        let network = LocalNetwork(getComputers (), _fullConnections, resistance)
         
         // act 
         let rec loop n =
@@ -60,12 +60,12 @@ type LocalNetworkTests () =
     member this.``With 0% resistance virus should expand like BFS.`` () =
         // arrange
         let resistance = Mock<Resistance>()
-                            .Setup(fun x -> <@ x.LinuxSusceptibility @>).Returns(1.0)
-                            .Setup(fun x -> <@ x.MacOSSusceptibility @>).Returns(1.0)
-                            .Setup(fun x -> <@ x.WindowsSusceptibility @>).Returns(1.0)
-                            .Setup(fun x -> <@ x.OtherOSSusceptibility @>).Returns(1.0)
-                            .Create()        
-        let network = LocalNetwork(_computers, _fullConnections, resistance)
+                            .Setup(fun x -> <@ x.LinuxResistance @>).Returns(0)
+                            .Setup(fun x -> <@ x.MacOSResistance @>).Returns(0)
+                            .Setup(fun x -> <@ x.WindowsResistance @>).Returns(0)
+                            .Setup(fun x -> <@ x.OtherOSResistance @>).Returns(0)
+                            .Create()
+        let network = LocalNetwork(getComputers (), _fullConnections, resistance)
         
         let checkVirusInFirstSet isIll epoch = 
             let rec loop n =                
@@ -96,29 +96,29 @@ type LocalNetworkTests () =
 
         // assert
         network.NewEpoch ()
-        let firstEpoch = network.Computers
-        checkVirusInFirstSet true firstEpoch
-        checkVirusInSecondSet false firstEpoch
-        checkVirusInThirdSet false firstEpoch
-        Seq.item 8 firstEpoch |> should equal false
+        let computersInFirstEpoch = network.Computers
+        checkVirusInFirstSet true computersInFirstEpoch
+        checkVirusInSecondSet false computersInFirstEpoch
+        checkVirusInThirdSet false computersInFirstEpoch
+        Seq.item 8 computersInFirstEpoch |> third |> should equal false
 
         network.NewEpoch ()
-        let secondEpoch = network.Computers
-        checkVirusInFirstSet true secondEpoch
-        checkVirusInSecondSet true secondEpoch
-        checkVirusInThirdSet false secondEpoch
-        Seq.item 8 secondEpoch |> should equal false
+        let computersInSecondEpoch = network.Computers
+        checkVirusInFirstSet true computersInSecondEpoch
+        checkVirusInSecondSet true computersInSecondEpoch
+        checkVirusInThirdSet false computersInSecondEpoch
+        Seq.item 8 computersInSecondEpoch |> third |> should equal false
 
         network.NewEpoch ()
-        let thirdEpoch = network.Computers
-        checkVirusInFirstSet true thirdEpoch
-        checkVirusInSecondSet true thirdEpoch
-        checkVirusInThirdSet true thirdEpoch
-        Seq.item 8 thirdEpoch |> should equal false
+        let computersInThirdEpoch = network.Computers
+        checkVirusInFirstSet true computersInThirdEpoch
+        checkVirusInSecondSet true computersInThirdEpoch
+        checkVirusInThirdSet true computersInThirdEpoch
+        Seq.item 8 computersInThirdEpoch |> third |> should equal false
 
         network.NewEpoch ()
-        let fourthEpoch = network.Computers
-        checkVirusInFirstSet true fourthEpoch
-        checkVirusInSecondSet true fourthEpoch
-        checkVirusInThirdSet true fourthEpoch
-        Seq.item 8 fourthEpoch |> should equal true
+        let computersInFourthEpoch = network.Computers
+        checkVirusInFirstSet true computersInFourthEpoch
+        checkVirusInSecondSet true computersInFourthEpoch
+        checkVirusInThirdSet true computersInFourthEpoch
+        Seq.item 8 computersInFourthEpoch |> third |> should equal true
