@@ -6,10 +6,7 @@ open NUnit.Framework
 open FsUnit
 
 [<TestFixture>]
-type PhonebookTestClass () =
-    
-
-
+type PhonebookTestClass () =    
     [<Test>]
     member this.``Add record (name and phone)`` () =
         ()
