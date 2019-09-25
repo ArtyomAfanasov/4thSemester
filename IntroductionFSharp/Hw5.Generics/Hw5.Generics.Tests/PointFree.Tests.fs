@@ -1,32 +1,27 @@
 ﻿namespace Hw5.Generics.Tests
 
 open FsCheck
-open PointFree
 open NUnit.Framework
 open FsUnit
 
+/// Записать в point-free стиле func x l = List.map (fun y -> y * x) l. 
 [<TestFixture>]
-type PointFreeTestClass () =
-    
+type PointFreeTestClass () =    
     [<Test>]
-    member this.``Example`` () =
-        let sumFirst3 ls = ls |> Seq.fold (+) 0 |> (*) 5
-        let sumFirstFree = Seq.fold (+) 0 >> (*) 5
-        let pointFreeIsCorrect (l : list<int>) =
-            sumFirst3 l = sumFirstFree l
-
-        Check.QuickThrowOnFailure pointFreeIsCorrect
-
-    [<Test>]
-    member this.``Example2`` () =
-        let func1 x = x * 5
-        let func2 = (*) 5
+    member this.``Main.`` () =
+        let func1 x l = List.map (fun y -> y * x) l
+        let func2 x l = List.map ((*) x) l
+        let func2 x = List.map ((*) x)
+        let func2 x = List.map (x |> (*))
+        let func2 x = (x |> (*)) |> List.map
+        let func2 x = x |> (*) |> List.map
+        let func2 = (*) >> List.map
         
-        let pointFreeIsCorrect (x : int) =
-            func1 x  = func2 x 
+        let pointFreeIsCorrect (x : int, l : list<int>) =
+            func1 x l = func2 x l
 
         Check.QuickThrowOnFailure pointFreeIsCorrect
-
+    
     [<Test>]
     member this.``Step1`` () =
         let func1 x l = List.map (fun y -> y * x) l
@@ -46,20 +41,43 @@ type PointFreeTestClass () =
             func1 x l = func2 x l
 
         Check.QuickThrowOnFailure pointFreeIsCorrect
-
+    
     [<Test>]
     member this.``Step3`` () =
-        let func1 x l = List.map ((*) x) l
-        let func2 x = List.map ((*) x)
+        let func1 x = List.map ((*) x)
+        let func2 x = List.map (x |> (*))
         
         let pointFreeIsCorrect (x : int, l : list<int>) =
             func1 x l = func2 x l
 
         Check.QuickThrowOnFailure pointFreeIsCorrect
+    
+    [<Test>]
+    member this.``Step4`` () =
+        let func1 x = List.map (x |> (*))
+        let func2 x = (x |> (*)) |> List.map
+        
+        let pointFreeIsCorrect (x : int, l : list<int>) =
+            func1 x l = func2 x l
 
-    (*[<Test>]
-    member this.``FsCheck for point-free function.`` () =
-        let func x l = List.map (fun y -> y * x) l
-        let pointFreeIsCorrect (x: int) (l : list<int>) = 
-            (pointFree x l) = func x l
-        Check.QuickThrowOnFailure pointFreeIsCorrect*)
+        Check.QuickThrowOnFailure pointFreeIsCorrect 
+    
+    [<Test>]
+    member this.``Step5`` () =
+        let func1 x = (x |> (*)) |> List.map
+        let func2 x = x |> (*) |> List.map
+        
+        let pointFreeIsCorrect (x : int, l : list<int>) =
+            func1 x l = func2 x l
+
+        Check.QuickThrowOnFailure pointFreeIsCorrect
+    
+    [<Test>]
+    member this.``Final step.`` () =
+        let func1 x = x |> (*) |> List.map
+        let func2 = (*) >> List.map
+        
+        let pointFreeIsCorrect (x : int, l : list<int>) =
+            func1 x l = func2 x l
+
+        Check.QuickThrowOnFailure pointFreeIsCorrect
