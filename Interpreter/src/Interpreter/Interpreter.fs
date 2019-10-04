@@ -23,39 +23,95 @@ type A = X|Y|Z with
 
 module Interpreter
 
-/// Закрывающие скобки.
-let openedBrackets = ['('; '['; '{'; '<'] 
-
-/// Получить аргумент для подстановки в редекс.
-let getArgumentForSubstitution expression =
-    match expression with 
-    | 
-    ()
-
+// Через скобки узнавать где нужно заменять.
 /// Выполнить альфа-конверсию.
 let changeByAlphaConversion expression =
     ()
 
-type LambdaExpression =
-    | LeftBr
-    | RightBr
+type Term =
+    | OpenedBr of Term
+    | ClosedBr of Term
 
-    | Lambda of LambdaExpression
-    | Parameter of string * LambdaExpression
+    | Lambda of Term
+    | Parameter of string * Term
+    | Dot of Term
     
     // Следует после "точки" в лямбда-выражении.
-    | Argument of string * LambdaExpression
+    | Argument of string * Term
     | EOF
 
+    | Zaglishka
+    
     member this.ReduceByBetaReduction = 
         let rec reduce expression =
             ()
            
-        reduce this 
+        reduce this
 
+(*let getNextTerm term = 
+    match term with 
+    | OpenedBr(desiredTerm) -> "", desiredTerm
+    | ClosedBr(desiredTerm) -> "", desiredTerm
+    | Lambda(desiredTerm) -> "", desiredTerm
+    | Parameter(name, desiredTerm) -> name, desiredTerm
+    | Dot(desiredTerm) -> "", desiredTerm
+    | Argument(name, desiredTerm) -> name, desiredTerm
+    | EOF -> "", EOF*)
+
+/// Цикл поиска первой лямбды.
+let rec loopLambda term = 
+    match term with 
+    | Lambda(_) -> term
+    
+    | OpenedBr(nextTerm) | ClosedBr(nextTerm) | Parameter(_, nextTerm) 
+    | Dot(nextTerm) | Argument(_, nextTerm) ->  loopLambda nextTerm
+           
+    | EOF -> EOF
+    | _ -> failwith "Should never get here."
+
+/// Цикл поиска аргумента для подстановки.
+let rec loopArgument numberNotClosedBr term =
+    match term with
+    | OpenedBr(nextTerm) -> loopArgument (numberNotClosedBr + 1) nextTerm        
+    | ClosedBr(nextTerm) -> 
+        let curNumberNotClosedBr = numberNotClosedBr - 1
+        if curNumberNotClosedBr = 0 then
+            // ToDo. взять аргумент и обработать хвост 
+            Zaglishka
+        else
+            loopArgument curNumberNotClosedBr nextTerm                                
+    
+    | Lambda(nextTerm) | Dot(nextTerm) | Parameter(_, nextTerm) | Argument(_, nextTerm) -> 
+        loopArgument numberNotClosedBr nextTerm
+ 
+    | EOF -> EOF
+    | _ -> failwith "Should never get here."
+
+/// Найти терм для подстановки.
+let findArgumentForSubstitution baseTerm =
+    let firstLambdaAndRest = loopLambda baseTerm
+    if firstLambdaAndRest = EOF then baseTerm    
+    else 
+        let argumentAndRest = loopArgument 1 firstLambdaAndRest
+        if argumentAndRest = EOF then baseTerm
+        else argumentAndRest
+
+/// Получить аргумент для подстановки в редекс и остаточное выражение.
+let getArgumentAndRest baseTerm =
+     let argumentAndRest = findArgumentForSubstitution baseTerm    
+     () // todo
+ 
 [<EntryPoint>]
 let main argv =
-    let l = Lambda(Parameter("x", (Argument("x", EOF))))
+    let l = Lambda(Parameter("x", (Argument("x", Argument("y", EOF)))))
+    let rec loop expr substit =             
+        match expr with
+        | Lambda a -> Lambda(loop a substit)
+        | Parameter (s, a) -> substit
+
+    let a(b) = l
+    printfn "%A" (a(b))
+    printfn "%A" <| loop l (Argument("x", Argument("y", EOF)))
     0
 
 (*
