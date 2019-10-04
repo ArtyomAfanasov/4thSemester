@@ -40,8 +40,11 @@ type Term =
     | Argument of string * Term
     | EOF
 
+    | EndOfArgument // МБ и не надо
+
     | Zaglishka
     
+    // ToDo
     member this.ReduceByBetaReduction = 
         let rec reduce expression =
             ()
@@ -75,9 +78,7 @@ let rec loopArgument numberNotClosedBr term =
     | OpenedBr(nextTerm) -> loopArgument (numberNotClosedBr + 1) nextTerm        
     | ClosedBr(nextTerm) -> 
         let curNumberNotClosedBr = numberNotClosedBr - 1
-        if curNumberNotClosedBr = 0 then
-            // ToDo. взять аргумент и обработать хвост 
-            Zaglishka
+        if curNumberNotClosedBr = 0 then nextTerm
         else
             loopArgument curNumberNotClosedBr nextTerm                                
     
@@ -87,20 +88,57 @@ let rec loopArgument numberNotClosedBr term =
     | EOF -> EOF
     | _ -> failwith "Should never get here."
 
-/// Найти терм для подстановки.
-let findArgumentForSubstitution baseTerm =
+/// Найти терм для подстановки. Также получим остаток выражения после него.
+let findArgumentWithRest baseTerm =
     let firstLambdaAndRest = loopLambda baseTerm
     if firstLambdaAndRest = EOF then baseTerm    
     else 
         let argumentAndRest = loopArgument 1 firstLambdaAndRest
         if argumentAndRest = EOF then baseTerm
-        else argumentAndRest
+        else 
+            argumentAndRest
+            //let cookedArgument, rest = cookArgumentAndRest argumentAndRest
+            //if cookedArgument = EOF && rest = EOF then baseTerm
+            //else cookedArgument, rest
+        
+// ToDo МОЖНО засунуть в функцию loopArgument, просто продолжив поиск, а на выходе кортеж:
+// let arg, res = loopArgument (.) (.)
+/// Приготовить :) аргумент для подстановки в редекс и остаточное выражение.
+let cookArgumentAndRest outerTerm =
+     let argumentWithRest = findArgumentWithRest outerTerm
+     
+     let rec loopArgumentAndRest numberNotClosedBr term =
+        match term with
+        | ClosedBr(nextTerm) -> 
+            let curNumberNotClosedBr = numberNotClosedBr - 1
+            
+            // случай c "( ( ) ... ) b"
+            // Вычленить аргумент и получить хвост 
+            if curNumberNotClosedBr = -1 then
+                EndOfArgument, ClosedBr(nextTerm)
+            // Если открывалась скобка для лямбды. Т.е. случай c "( ( ) ( ) ) b"
+            if curNumberNotClosedBr = 0 then
+                // ВОЗВРАЩАЕМ ЗАКРЫВАЮЩУЮ СТРОКУ И ХВОСТ ЧЕРЕЗ КОРТЕЖ
+                ClosedBr(EndOfArgument), nextTerm
+            else                
+                ClosedBr(loopArgumentAndRest curNumberNotClosedBr nextTerm)                    
 
-/// Получить аргумент для подстановки в редекс и остаточное выражение.
-let getArgumentAndRest baseTerm =
-     let argumentAndRest = findArgumentForSubstitution baseTerm    
-     () // todo
+        | OpenedBr(nextTerm) -> 
+            // собираем аргумент + прикрепляем остаток.
+            OpenedBr(loopArgumentAndRest (numberNotClosedBr + 1) nextTerm)            
+                                            
+        | Lambda(nextTerm) -> Lambda(loopArgumentAndRest numberNotClosedBr nextTerm)
+        | Dot(nextTerm) -> Dot(loopArgumentAndRest numberNotClosedBr nextTerm)
+        | Parameter(name, nextTerm) -> (Parameter(name, loopArgumentAndRest numberNotClosedBr nextTerm))
+        | Argument(name, nextTerm) -> Argument(name, loopArgumentAndRest numberNotClosedBr nextTerm)
  
+        | EOF -> EOF, EOF
+        | _ -> failwith "Should never get here."
+
+     loopArgumentAndRest 0 argumentWithRest
+ 
+ /// ToDo. Убрать EndOfArgument у аргумента
+
 [<EntryPoint>]
 let main argv =
     let l = Lambda(Parameter("x", (Argument("x", Argument("y", EOF)))))
@@ -109,9 +147,8 @@ let main argv =
         | Lambda a -> Lambda(loop a substit)
         | Parameter (s, a) -> substit
 
-    let a(b) = l
-    printfn "%A" (a(b))
     printfn "%A" <| loop l (Argument("x", Argument("y", EOF)))
+
     0
 
 (*
