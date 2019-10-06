@@ -4,9 +4,6 @@
 
 module Interpreter
  
-/// Множество переменных. При альфа-конверсии ToUpper.
-let alphabet = ['a'..'z']
-
 type Term = 
     | Variable of char
     | Applique of Term * Term
