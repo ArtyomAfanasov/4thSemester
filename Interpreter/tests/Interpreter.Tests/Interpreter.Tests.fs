@@ -41,7 +41,7 @@ type InterpreterTestClass () =
         |> should equal (Applique(Applique(Variable('b'), Variable('c')), Variable('b')))   
     
     [<Test>]
-    member this.``Test should correct normalize `((\l x. \l y. \l z. x z (y z)) (\l x. \l y. x)) \l x. \l y. x` with ... result.`` () =
+    member this.``Test for alpha conversion. Test should correct normalize `((\l x. \l y. \l z. x z (y z)) (\l x. \l y. x)) \l x. \l y. x` with ... result.`` () =
         let firstPart = 
             LambdaAbstract('x', 
                 LambdaAbstract('y', 
@@ -53,6 +53,73 @@ type InterpreterTestClass () =
 
         let thirdPart = LambdaAbstract('x', LambdaAbstract('y', Variable('x')))
 
+        Applique(Applique(firstPart, secondPart), thirdPart)
+        |>
+        normalizeTerm |> should equal (LambdaAbstract('z', Variable('z')))   
+            
+    [<Test>]
+    member this.``Test should correct normalize `(\l x. x) (\l y. y)` with ... result.`` () =        
+        let term = Applique(LambdaAbstract('x', Variable('x')), LambdaAbstract('y', Variable('y')))
+        
+        term |> normalizeTerm |> should equal (LambdaAbstract('y', Variable('y')))
+
+    [<Test>]
+    member this.``Test should correct normalize `((\l x. \l y. \l z. x z (y z)) (\l a. \l b. a)) \l c. \l d. c` with ... result.`` () =
+        let firstPart = 
+            LambdaAbstract('x', 
+                LambdaAbstract('y', 
+                    LambdaAbstract('z', 
+                        Applique(
+                            Applique(Variable('x'), Variable('z')), Applique(Variable('y'), Variable('z'))))))    
+                        
+        let secondPart = LambdaAbstract('a', LambdaAbstract('b', Variable('a')))
+
+        let thirdPart = LambdaAbstract('c', LambdaAbstract('d', Variable('c')))
+
         let term = Applique(Applique(firstPart, secondPart), thirdPart)
         
-        term |> normalizeTerm |> should equal (LambdaAbstract('x', Variable('x')))
+        term |> normalizeTerm |> should equal (LambdaAbstract('z', Variable('z')))
+        
+    [<Test>]
+    member this.``Step 2. Test should correct normalize `some` with ... result.`` () =
+        let firstPart = 
+            LambdaAbstract('y',
+                LambdaAbstract('z', 
+                    Applique(
+                        Applique(LambdaAbstract('u', LambdaAbstract('i', Variable('u'))), Variable('z')), Applique(Variable('y'), Variable('z')))))
+        
+        let secondPart = 
+            LambdaAbstract('h', 
+                LambdaAbstract('j',
+                    Variable('h')))
+
+        Applique(firstPart, secondPart)
+        |>
+        normalizeTerm |> should equal (LambdaAbstract('z', Variable('z')))
+
+    [<Test>]
+    member this.``Step 3. Test should correct normalize `(\l z. ((\l t u. t) z)) ((\l b c. b) z))` with ... result.`` () =
+        (LambdaAbstract('z', 
+            Applique(
+                Applique(
+                    LambdaAbstract('t', 
+                        LambdaAbstract('u', 
+                            Variable('t'))), 
+                                Variable('z')),
+                                    Applique(
+                                        LambdaAbstract('b', 
+                                            LambdaAbstract('c', Variable('b'))), Variable('z')))))
+        |>
+        normalizeTerm |> should equal (LambdaAbstract('z', Variable('z')))
+
+    [<Test>]
+    member this.``Step 4. Test should correct normalize `(\l z. (\l a. z)) ((\l b c. b) z))` with ... result.`` () =
+        (LambdaAbstract('z', 
+            Applique(
+                LambdaAbstract('a', 
+                    Variable('z')),
+                        Applique(
+                            LambdaAbstract('b', 
+                                LambdaAbstract('c', Variable('b'))), Variable('z')))))
+        |>
+        normalizeTerm |> should equal (LambdaAbstract('z', Variable('z')))

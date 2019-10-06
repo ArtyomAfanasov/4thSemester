@@ -28,7 +28,12 @@ let bettaReduction replacementName termForSubstitution argument =
         | Applique(func, innerArgument) ->
             match func with 
             | Variable(_) -> Applique(reduce func, reduce innerArgument)
-            | Applique(_, _) -> Applique(reduce func, reduce innerArgument)
+            | Applique(_, _) -> 
+                let debug = Applique(reduce func, reduce innerArgument)
+                debug
+            | LambdaAbstract(name, nextTerm) -> 
+                let debug = Applique(LambdaAbstract(name, reduce nextTerm), innerArgument)
+                debug
 
     reduce termForSubstitution
 
@@ -56,7 +61,7 @@ let normalizeTerm outerTerm =
             | LambdaAbstract(name, nextTerm) -> bettaReduction name nextTerm argument
 
     let rec loop step term =
-        if step > appliqueNumber then term
+        if step > (appliqueNumber) then term
         else 
             let newTerm = findAndReduceRedex term
             loop (step + 1) newTerm
