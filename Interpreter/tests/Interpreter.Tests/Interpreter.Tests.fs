@@ -18,14 +18,16 @@ type InterpreterTestClass () =
         |>
         normalizeTerm |> should equal (LambdaAbstract('y', Applique(Variable('b'), Variable('y'))))
     
+    // Can i avoid such terrible DU?
     [<Test>]
     member this.``Test should correct count applique `((\l x. \l y. x y x) b) c` with ... result.`` () =
         Applique(
             Applique(
                 LambdaAbstract('x', 
-                                LambdaAbstract('y', Applique(
-                                                        Applique(
-                                                            Variable('x'), Variable('y')), Variable('x')))), Variable('b')), Variable('c'))
+                    LambdaAbstract('y', 
+                        Applique(
+                            Applique(
+                                Variable('x'), Variable('y')), Variable('x')))), Variable('b')), Variable('c'))
         |> countApplique |> should equal 4
     
     [<Test>]
@@ -33,15 +35,16 @@ type InterpreterTestClass () =
         Applique(
             Applique(
                 LambdaAbstract('x', 
-                                LambdaAbstract('y', Applique(
-                                                        Applique(
-                                                            Variable('x'), Variable('y')), Variable('x')))), Variable('b')), Variable('c'))
+                    LambdaAbstract('y', 
+                        Applique(
+                            Applique(
+                                Variable('x'), Variable('y')), Variable('x')))), Variable('b')), Variable('c'))
         |>
         normalizeTerm 
         |> should equal (Applique(Applique(Variable('b'), Variable('c')), Variable('b')))   
     
     [<Test>]
-    member this.``Test for alpha conversion. Test should correct normalize `((\l x. \l y. \l z. x z (y z)) (\l x. \l y. x)) \l x. \l y. x` with ... result.`` () =
+    member this.``Big main test. Test should correct normalize `((\l x. \l y. \l z. x z (y z)) (\l x. \l y. x)) \l x. \l y. x` with ... result.`` () =
         let firstPart = 
             LambdaAbstract('x', 
                 LambdaAbstract('y', 
@@ -63,6 +66,7 @@ type InterpreterTestClass () =
         
         term |> normalizeTerm |> should equal (LambdaAbstract('y', Variable('y')))
 
+    // Test with hand alpha conversion. But this conversion is useless.
     [<Test>]
     member this.``Test should correct normalize `((\l x. \l y. \l z. x z (y z)) (\l a. \l b. a)) \l c. \l d. c` with ... result.`` () =
         let firstPart = 
@@ -80,6 +84,7 @@ type InterpreterTestClass () =
         
         term |> normalizeTerm |> should equal (LambdaAbstract('z', Variable('z')))
         
+    // Tests for debug.
     [<Test>]
     member this.``Step 2. Test should correct normalize `some` with ... result.`` () =
         let firstPart = 
