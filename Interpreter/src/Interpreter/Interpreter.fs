@@ -139,7 +139,6 @@ let cookArgumentAndRest outerTerm =
  
  /// ToDo. Убрать EndOfArgument у аргумента
 
-[<EntryPoint>]
 let main argv =
     let l = Lambda(Parameter("x", (Argument("x", Argument("y", EOF)))))
     let rec loop expr substit =             

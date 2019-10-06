@@ -6,7 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!--
     <Compile Include="Interpreter.fs" />
+    -->
+    <Compile Include="NewInterpreter.fs" />
   </ItemGroup>
 
 </Project>
