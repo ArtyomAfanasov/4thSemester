@@ -2,7 +2,7 @@ namespace Interpreter.Tests
 
 open NUnit.Framework
 open FsUnit
-open NewInterpreter
+open Interpreter
 
 [<TestFixture>]
 type InterpreterTestClass () =
