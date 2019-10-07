@@ -1,7 +1,4 @@
-﻿// передавать каждый раз новый Map для alpha-конверсии, которая будет на лету.
-
-// Аппликация -- вот что главное в исчислении будет.
-
+﻿// передавать каждый раз новый Map для alpha-конверсии, которая будет на лету. -- Заметки для меня :)
 module Interpreter
  
 type Term = 
@@ -10,9 +7,15 @@ type Term =
     | LambdaAbstract of char * Term
 
 /// Выполнить альфа-конверсию.
-let alphaConversion term =
-   
-    ()
+let prepareToAlphaConversion outerTerm =
+    let rec setAlphabet alphabet term =
+        match term with
+        | Variable(_) -> alphabet
+        | Applique(func, argument) -> 
+            (setAlphabet alphabet func) @ (setAlphabet alphabet argument)
+        | LambdaAbstract(name, nextTerm) -> setAlphabet (name :: alphabet) nextTerm
+
+    setAlphabet [] outerTerm
 
 /// Выполнить бетта-редукцию.
 let bettaReduction replacementName termForSubstitution argument =
@@ -34,6 +37,7 @@ let bettaReduction replacementName termForSubstitution argument =
 
     reduce termForSubstitution
 
+/// Сосчитать количество аппликаций.
 let countApplique outerTerm =
     let rec count number term =
         match term with
@@ -43,7 +47,7 @@ let countApplique outerTerm =
 
     count 0 outerTerm
 
-/// Выполнить бетта-редукцию.
+/// Нормализовать терм.
 let normalizeTerm outerTerm =
     let appliqueNumber = countApplique outerTerm
 

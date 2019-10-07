@@ -128,3 +128,9 @@ type InterpreterTestClass () =
                                 LambdaAbstract('c', Variable('b'))), Variable('z')))))
         |>
         normalizeTerm |> should equal (LambdaAbstract('z', Variable('z')))
+    
+    (*[<Test>]
+    member this.``Test should correct set alphabet with ... result.`` () =
+        Applique(LambdaAbstract('x', Applique(Variable('x'), Variable('y'))), LambdaAbstract('y', Variable('y')))
+        |> 
+        prepareToAlphaConversion |> should equal ['z']*)
