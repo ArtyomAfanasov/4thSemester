@@ -28,39 +28,23 @@ let performSubstitution replacementName termForSubstitution argument =
         | Application(func, innerArgument) -> Application(perform func, perform innerArgument)
 
     perform termForSubstitution
-
-            //match func with 
-            //| Variable(_) -> Application(perform func, perform innerArgument)
-            //| Application(_, _) ->
-            //    let debug = Application(perform func, perform innerArgument)
-            //    debug
-            //| LambdaAbstraction(name, nextTerm) -> 
-            //    let debug = Application(LambdaAbstraction(name, perform nextTerm), innerArgument)
-            //    debug
     
-// TODO Нормальный подсчёт всех аппликаций, либо другой вариант цикла.
 /// Сосчитать количество аппликаций.
-let countApplique outerTerm =
-    let rec countLeft listForCounting term =
+let countApplications outerTerm =
+    let rec countLeft term sum  =
         match term with
-        | Application(func, _) -> 
-            countLeft (listForCounting + 1) func
-        | Variable(_) -> listForCounting
-        | LambdaAbstraction(_, nextTerm) -> countLeft listForCounting nextTerm
+        | Application(func, argumenmt) -> 
+             (countLeft func (sum + 1)) 
+             |> 
+             (countLeft argumenmt)
+        | Variable(_) -> sum
+        | LambdaAbstraction(_, nextTerm) -> countLeft nextTerm sum 
 
-    let rec countRight listForCounting term =
-        match term with
-        | Application(_, argument) -> 
-            countRight (listForCounting + 1) argument
-        | Variable(_) -> listForCounting
-        | LambdaAbstraction(_, nextTerm) -> countRight listForCounting nextTerm
-
-    let numberOfApplications = countLeft 0 outerTerm
-    countRight numberOfApplications outerTerm
+    countLeft outerTerm 0 
 
 /// Нормализовать терм.
 let normalizeTerm outerTerm =
-    let appliqueNumber = countApplique outerTerm
+    let applicationsNumber = countApplications outerTerm
 
     let rec findAndReduceRedex term =
         match term with
@@ -73,7 +57,7 @@ let normalizeTerm outerTerm =
             | LambdaAbstraction(name, nextTerm) -> performSubstitution name nextTerm argument
 
     let rec loop step term =
-        if step > (appliqueNumber) then term
+        if step > (applicationsNumber) then term
         else 
             let newTerm = findAndReduceRedex term
             loop (step + 1) newTerm
