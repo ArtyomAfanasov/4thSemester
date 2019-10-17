@@ -1,13 +1,57 @@
 ﻿// передавать каждый раз новый Map для alpha-конверсии, которая будет на лету. -- Заметки для меня :)
+
+// ToDo: найти как налету изменять терм, думая, что альфа-конверсия уже готова.
 module Interpreter
  
+/// Лямбда-терм.
 type Term = 
     | Variable of char
     | Application of Term * Term
     | LambdaAbstraction of char * Term
 
+/// Получить локальный алфавит аргумента из свободных переменных.
+let getLocalFreeAlphabet argument =
+    let rec setAlphabet term alphabet ignoreChars =
+        match term with
+        | Variable(name) ->
+            if List.contains name ignoreChars then alphabet
+            else name :: alphabet
+        | Application(func, arg) ->
+            setAlphabet arg (setAlphabet func alphabet ignoreChars) ignoreChars
+        | LambdaAbstraction(name, nextTerm) ->
+            if List.contains name ignoreChars then 
+                setAlphabet nextTerm alphabet ignoreChars
+            else 
+                setAlphabet nextTerm alphabet (name :: ignoreChars)        
+        
+    setAlphabet argument [] []
+    |>
+    List.distinct
+
 /// Выполнить альфа-конверсию.
-let prepareToAlphaConversion outerTerm =
+let performAlphaConversion conflictNames outerTerm =
+    let rec perform term  =
+        match term with 
+        | Variable(name) -> 
+            if List.contains name conflictNames then 
+                Variable((char)(name.ToString().ToUpperInvariant()))
+            else
+                term
+        | Application(func, argument) -> 
+            Application(perform func , perform argument )
+        | LambdaAbstraction(name, nextTerm) ->
+            LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )
+            (*if List.contains name conflictNames then
+                LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )                                                                                    
+            else
+                // return term -- это неверно. Нужно удалять символы из алфавита просто.                
+                // term
+                LambdaAbstraction(name, perform nextTerm )
+            *)
+
+    perform outerTerm
+
+(*let prepareToAlphaConversion outerTerm =
     let rec setAlphabet alphabet term =
         match term with
         | Variable(_) -> alphabet
@@ -16,6 +60,7 @@ let prepareToAlphaConversion outerTerm =
         | LambdaAbstraction(name, nextTerm) -> setAlphabet (name :: alphabet) nextTerm
 
     setAlphabet [] outerTerm
+*)
 
 /// Выполнить подстановку.
 let performSubstitution replacementName termForSubstitution argument =
@@ -24,23 +69,27 @@ let performSubstitution replacementName termForSubstitution argument =
         | Variable(nameInLamdaAbstract) ->
             if nameInLamdaAbstract = replacementName then argument
             else term
-        | LambdaAbstraction(name, nextTerm) -> LambdaAbstraction(name, perform nextTerm)
+        | LambdaAbstraction(name, nextTerm) -> 
+            // Здесь тоже неверно, т.к. внутри абстракции может быть нужная переменная.
+            // UPD: Нет, всё-таки это верно, т.к. мы по одномй переменной заменяем.
+            if name = replacementName then term
+            else LambdaAbstraction(name, perform nextTerm)
         | Application(func, innerArgument) -> Application(perform func, perform innerArgument)
 
     perform termForSubstitution
     
 /// Сосчитать количество аппликаций.
 let countApplications outerTerm =
-    let rec countLeft term sum  =
+    let rec count term sum  =
         match term with
         | Application(func, argumenmt) -> 
-             (countLeft func (sum + 1)) 
+             (count func (sum + 1)) 
              |> 
-             (countLeft argumenmt)
+             (count argumenmt)
         | Variable(_) -> sum
-        | LambdaAbstraction(_, nextTerm) -> countLeft nextTerm sum 
+        | LambdaAbstraction(_, nextTerm) -> count nextTerm sum 
 
-    countLeft outerTerm 0 
+    count outerTerm 0 
 
 /// Нормализовать терм.
 let normalizeTerm outerTerm =
@@ -48,7 +97,7 @@ let normalizeTerm outerTerm =
 
     let rec findAndReduceRedex term =
         match term with
-        | Variable(name) -> term
+        | Variable(_) -> term
         | LambdaAbstraction(name, nextTerm) -> LambdaAbstraction(name, findAndReduceRedex nextTerm)
         | Application(func, argument) -> 
             match func with
