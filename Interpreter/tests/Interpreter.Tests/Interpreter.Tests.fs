@@ -5,7 +5,23 @@ open FsUnit
 open Interpreter
 
 [<TestFixture>]
-type InterpreterTestClass () =
+type InterpreterTestClass () =    
+    [<Test>]
+    member this.``Complex test: alpha conversion, normalization. Test should correct normalize complex term.`` () =
+        let theInnermostRightTerm =
+            Application(LambdaAbstraction('x', Application(Application(Variable('x'), Variable('y')), Variable('x'))), Variable('y'))
+        let theInnermostLeftTerm =
+            Application(Variable('x'), Variable('z'))
+        let bigLeftTerm =
+            LambdaAbstraction('x', LambdaAbstraction('y', LambdaAbstraction('z', Application(theInnermostLeftTerm, theInnermostRightTerm))))
+        let mainTerm = 
+            Application(Application(bigLeftTerm ,Variable('y')), LambdaAbstraction('x', Variable('x')))
+
+        let expected =
+            LambdaAbstraction('z', Application(Application(Variable('y'), Variable('z')), LambdaAbstraction('x', Variable('x'))))
+
+        mainTerm |> normalizeTerm |> should equal expected
+    
     [<Test>]
     member this.``Test should correct normalize `(\l x. x) b` with 'b' result.`` () =
         (Application(LambdaAbstraction('x', Variable('x')), Variable('b')))
@@ -179,4 +195,4 @@ type InterpreterTestClass () =
         Application(Application(LambdaAbstraction('a', Application(Variable('a'), Variable('b'))), Variable('b')), Variable('c'))
         |>
         getLocalFreeAlphabet
-        |> should equal ['c'; 'b']
+        |> should equal ['c'; 'b']    
