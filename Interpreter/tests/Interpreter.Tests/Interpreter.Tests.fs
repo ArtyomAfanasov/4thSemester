@@ -133,25 +133,25 @@ type InterpreterTestClass () =
         |> normalizeTerm |> should equal (LambdaAbstraction('y', Variable('y')))
     
     [<Test>]
-    member this.``Test should correct perform alpha conversion (x \l x. x) with ... result.`` () =
+    member this.``Test should correct perform alpha conversion (x \l x. x) with argument (x) with ... result.`` () =
         Application(Variable('x'), LambdaAbstraction('x', Variable('x')))
         |> performAlphaConversion ['x']
         |> should equal 
-            (Application(Variable('X'), LambdaAbstraction('x', Variable('x'))))    
+            (Application(Variable('x'), LambdaAbstraction('x', Variable('x'))))    
     
     [<Test>]
-    member this.``Test should correct perform alpha conversion (x (\l x. x b)) with ... result.`` () =
+    member this.``Test should correct perform alpha conversion (x (\l x. x b)) with argument (x b) with ... result.`` () =
         Application(Variable('x'), LambdaAbstraction('x', Application(Variable('x'), Variable('b'))))
         |> performAlphaConversion ['x'; 'b']
         |> should equal 
-            (Application(Variable('X'), LambdaAbstraction('x', Application(Variable('x'), Variable('B')))))    
+            (Application(Variable('x'), LambdaAbstraction('x', Application(Variable('x'), Variable('b')))))    
     
     [<Test>]
-    member this.``Test should correct perform alpha conversion ((\l x. x b a) x) with ... result.`` () =
-        Application(LambdaAbstraction('x', Application(Application(Variable('x'), Variable('b')), Variable('a'))), Variable('x'))
-        |> performAlphaConversion ['x'; 'b'; 'a']
+    member this.``Test should correct perform alpha conversion (\l x. x b a) with argument (b a) with ... result.`` () =
+        LambdaAbstraction('x', Application(Application(Variable('x'), Variable('b')), Variable('a')))
+        |> performAlphaConversion ['b'; 'a']
         |> should equal 
-            (Application(LambdaAbstraction('x', Application(Application(Variable('x'), Variable('B')), Variable('A'))), Variable('X')))
+            (LambdaAbstraction('x', Application(Application(Variable('x'), Variable('B')), Variable('A'))))
 
     [<Test>]
     member this.``Test should correct get alphabet from term `(\l x. \l y. x y) b`.`` () =

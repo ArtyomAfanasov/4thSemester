@@ -28,10 +28,12 @@ let getLocalFreeAlphabet argument =
     |>
     List.distinct
 
+// ToDo: Нужно сначала обработать лямбды, а потом аппликации и переменные.
+
 /// Выполнить альфа-конверсию.
 let performAlphaConversion conflictNames outerTerm =
-    let rec perform term  =
-        match term with 
+    let rec perform term =
+        match term with
         | Variable(name) -> 
             if List.contains name conflictNames then 
                 Variable((char)(name.ToString().ToUpperInvariant()))
@@ -40,16 +42,17 @@ let performAlphaConversion conflictNames outerTerm =
         | Application(func, argument) -> 
             Application(perform func , perform argument )
         | LambdaAbstraction(name, nextTerm) ->
-            LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )
-            (*if List.contains name conflictNames then
+            //LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )
+            if List.contains name conflictNames then
                 LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )                                                                                    
             else
                 // return term -- это неверно. Нужно удалять символы из алфавита просто.                
                 // term
-                LambdaAbstraction(name, perform nextTerm )
-            *)
+                LambdaAbstraction(name, perform nextTerm)   
 
-    perform outerTerm
+    match outerTerm with 
+    | LambdaAbstraction(_, _) -> perform outerTerm            
+    | _ -> outerTerm
 
 (*let prepareToAlphaConversion outerTerm =
     let rec setAlphabet alphabet term =
@@ -74,7 +77,8 @@ let performSubstitution replacementName termForSubstitution argument =
             // UPD: Нет, всё-таки это верно, т.к. мы по одномй переменной заменяем.
             if name = replacementName then term
             else LambdaAbstraction(name, perform nextTerm)
-        | Application(func, innerArgument) -> Application(perform func, perform innerArgument)
+        | Application(func, innerArgument) ->
+            Application(perform func, perform innerArgument)
 
     perform termForSubstitution
     
@@ -99,11 +103,20 @@ let normalizeTerm outerTerm =
         match term with
         | Variable(_) -> term
         | LambdaAbstraction(name, nextTerm) -> LambdaAbstraction(name, findAndReduceRedex nextTerm)
-        | Application(func, argument) -> 
+        | Application(func, argument) ->             
             match func with
             | Variable(_) -> Application(func, findAndReduceRedex argument)
             | Application(_, _) -> Application(findAndReduceRedex func, findAndReduceRedex argument)
-            | LambdaAbstraction(name, nextTerm) -> performSubstitution name nextTerm argument
+            | LambdaAbstraction(name, nextTerm) -> 
+                let freeAlphabet = getLocalFreeAlphabet argument                                
+                let convertedNextTerm = performAlphaConversion freeAlphabet nextTerm            
+
+                if List.contains name freeAlphabet then
+                    performSubstitution ((char)(name.ToString().ToUpperInvariant())) convertedNextTerm argument
+                else
+                    performSubstitution name convertedNextTerm argument
+
+                //performSubstitution name nextTerm argument
 
     let rec loop step term =
         if step > (applicationsNumber) then term
