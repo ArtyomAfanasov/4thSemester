@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="AttractiveInterpreter.Tests.fs" />
     <Compile Include="Interpreter.Tests.fs" />
   </ItemGroup>
 
