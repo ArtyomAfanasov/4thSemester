@@ -1,6 +1,4 @@
-﻿// передавать каждый раз новый Map для alpha-конверсии, которая будет на лету. -- Заметки для меня :)
-
-// ToDo: найти как налету изменять терм, думая, что альфа-конверсия уже готова.
+﻿// Содержит нормализатор лямбда-исчисления.
 module Interpreter
  
 /// Лямбда-терм.
@@ -28,8 +26,6 @@ let getLocalFreeAlphabet argument =
     |>
     List.distinct
 
-// ToDo: Нужно сначала обработать лямбды, а потом аппликации и переменные.
-
 /// Выполнить альфа-конверсию.
 let performAlphaConversion conflictNames outerTerm =
     let rec perform term =
@@ -42,28 +38,18 @@ let performAlphaConversion conflictNames outerTerm =
         | Application(func, argument) -> 
             Application(perform func , perform argument )
         | LambdaAbstraction(name, nextTerm) ->
-            //LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )
             if List.contains name conflictNames then
                 LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )                                                                                    
             else
-                // return term -- это неверно. Нужно удалять символы из алфавита просто.                
-                // term
                 LambdaAbstraction(name, perform nextTerm)   
 
-    match outerTerm with 
-    | LambdaAbstraction(_, _) -> perform outerTerm            
-    | _ -> outerTerm
+    let rec findLambda innerTerm =       
+        match innerTerm with 
+        | LambdaAbstraction(_, _) -> perform innerTerm            
+        | Application(func, arg) -> Application(findLambda func, findLambda arg)
+        | Variable(_) -> innerTerm
 
-(*let prepareToAlphaConversion outerTerm =
-    let rec setAlphabet alphabet term =
-        match term with
-        | Variable(_) -> alphabet
-        | Application(func, argument) -> 
-            (setAlphabet alphabet func) @ (setAlphabet alphabet argument)
-        | LambdaAbstraction(name, nextTerm) -> setAlphabet (name :: alphabet) nextTerm
-
-    setAlphabet [] outerTerm
-*)
+    findLambda outerTerm
 
 /// Выполнить подстановку.
 let performSubstitution replacementName termForSubstitution argument =
@@ -73,8 +59,6 @@ let performSubstitution replacementName termForSubstitution argument =
             if nameInLamdaAbstract = replacementName then argument
             else term
         | LambdaAbstraction(name, nextTerm) -> 
-            // Здесь тоже неверно, т.к. внутри абстракции может быть нужная переменная.
-            // UPD: Нет, всё-таки это верно, т.к. мы по одномй переменной заменяем.
             if name = replacementName then term
             else LambdaAbstraction(name, perform nextTerm)
         | Application(func, innerArgument) ->
@@ -103,20 +87,15 @@ let normalizeTerm outerTerm =
         match term with
         | Variable(_) -> term
         | LambdaAbstraction(name, nextTerm) -> LambdaAbstraction(name, findAndReduceRedex nextTerm)
-        | Application(func, argument) ->             
+        | Application(func, argument) ->
             match func with
             | Variable(_) -> Application(func, findAndReduceRedex argument)
             | Application(_, _) -> Application(findAndReduceRedex func, findAndReduceRedex argument)
             | LambdaAbstraction(name, nextTerm) -> 
                 let freeAlphabet = getLocalFreeAlphabet argument                                
-                let convertedNextTerm = performAlphaConversion freeAlphabet nextTerm            
-
-                if List.contains name freeAlphabet then
-                    performSubstitution ((char)(name.ToString().ToUpperInvariant())) convertedNextTerm argument
-                else
-                    performSubstitution name convertedNextTerm argument
-
-                //performSubstitution name nextTerm argument
+                let convertedNextTerm = performAlphaConversion freeAlphabet nextTerm                            
+                
+                performSubstitution name convertedNextTerm argument
 
     let rec loop step term =
         if step > (applicationsNumber) then term

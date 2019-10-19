@@ -149,21 +149,21 @@ type InterpreterTestClass () =
         |> normalizeTerm |> should equal (LambdaAbstraction('y', Variable('y')))
     
     [<Test>]
-    member this.``Test should correct perform alpha conversion (x \l x. x) with argument (x) with ... result.`` () =
+    member this.``Test should correct perform alpha conversion (x \l x. x) for freeAlphabet (x) with ... result.`` () =
         Application(Variable('x'), LambdaAbstraction('x', Variable('x')))
         |> performAlphaConversion ['x']
         |> should equal 
-            (Application(Variable('x'), LambdaAbstraction('x', Variable('x'))))    
+            (Application(Variable('x'), LambdaAbstraction('X', Variable('X'))))    
     
     [<Test>]
-    member this.``Test should correct perform alpha conversion (x (\l x. x b)) with argument (x b) with ... result.`` () =
+    member this.``Test should correct perform alpha conversion (x (\l x. x b)) for freeAlphabet (x b) with ... result.`` () =
         Application(Variable('x'), LambdaAbstraction('x', Application(Variable('x'), Variable('b'))))
         |> performAlphaConversion ['x'; 'b']
         |> should equal 
-            (Application(Variable('x'), LambdaAbstraction('x', Application(Variable('x'), Variable('b')))))    
+            (Application(Variable('x'), LambdaAbstraction('X', Application(Variable('X'), Variable('B')))))    
     
     [<Test>]
-    member this.``Test should correct perform alpha conversion (\l x. x b a) with argument (b a) with ... result.`` () =
+    member this.``Test should correct perform alpha conversion (\l x. x b a) for freeAlphabet (b a) with ... result.`` () =
         LambdaAbstraction('x', Application(Application(Variable('x'), Variable('b')), Variable('a')))
         |> performAlphaConversion ['b'; 'a']
         |> should equal 
@@ -196,3 +196,17 @@ type InterpreterTestClass () =
         |>
         getLocalFreeAlphabet
         |> should equal ['c'; 'b']    
+    
+    [<Test>]
+    member this.``Test should correct converse all lambda abstractions ((l y. b (l x. x y)) x).`` () =
+        Application(LambdaAbstraction('y', Application(Variable('b'), LambdaAbstraction('x', Application(Variable('x'), Variable('y'))))), Variable('x'))
+        |>
+        normalizeTerm
+        |> should equal (Application(Variable('b'), LambdaAbstraction('X', Application(Variable('X'), Variable('x')))))    
+    
+    [<Test>]
+    member this.``Test should skip labmda abstraction with parameter name that equal replacement name: ((l x. b (l x. x x)) y).`` () =
+        Application(LambdaAbstraction('x', Application(Variable('b'), LambdaAbstraction('x', Application(Variable('x'), Variable('x'))))), Variable('y'))
+        |>
+        normalizeTerm
+        |> should equal (Application(Variable('b'), LambdaAbstraction('x', Application(Variable('x'), Variable('x')))))
