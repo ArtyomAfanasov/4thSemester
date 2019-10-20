@@ -9,7 +9,7 @@ type ArithmeticExpressionParseTreeTestCalss () =
 
     [<Test>]
     member this.``calculateValue on Plus(Value(2),Value(4)) should return 6`` () =                    
-        calculateValue (Plus(Value(2),Value(4))) |> should equal 6        
+        calculateValue (Plus(Value(2), Value(4))) |> should equal 6        
     
     [<Test>]
     member this.``calculateValue on Minus(Value(6), Value(4)) should return 2`` () = 
