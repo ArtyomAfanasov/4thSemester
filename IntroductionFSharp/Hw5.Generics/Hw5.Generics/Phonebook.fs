@@ -25,8 +25,8 @@ let main argv =
             let phone = Console.ReadLine()
 
             let normalizedPhone = normalizePhone phone   
-            if normalizedPhone = phoneStringError then 
-                printfn "%s" phoneStringError
+            if normalizedPhone = phoneAlphabetError then 
+                printfn "%s" phoneAlphabetError
                 interactiveMod phonebookHashTable
             else 
                 let updatedPhonebookHashTable = addRecord name normalizedPhone phonebookHashTable
@@ -62,7 +62,7 @@ let main argv =
             interactiveMod phonebookHashTable
         | "5" ->
             Console.Clear() 
-            printfn "Введите абсолютный путь к файлу (должен содержать имя файла), в который сохранить данные."
+            printfn "Введите абсолютный путь к файлу (путь содержит имя файла), в который сохранить данные."
 
             let path = Console.ReadLine()
 
@@ -71,8 +71,8 @@ let main argv =
             interactiveMod phonebookHashTable
         | "6" ->
             Console.Clear()
-            printfn "Учтите, что текущая база данных заменится загружаемой в случае, если файл существует."
-            printfn "Для отмены операции введите 'q'."
+            printfn "Учтите, что текущая база данных заменится загружаемой,"
+            printfn "если файл существует. Для отмены операции введите 'q'.\n"
             printfn "Введите абсолютный путь до файла, из которого считывать данные."            
             let request = Console.ReadLine()
 
@@ -84,12 +84,9 @@ let main argv =
                 try
                     let coupleOfNameAndPhoneSeq =
                            seq {
-                               use reader = 
-                                   new StreamReader(
-                                       File.OpenRead(path))
-
-                           while not reader.EndOfStream do
-                               yield reader.ReadLine() }
+                               use reader = new StreamReader(File.OpenRead(path))
+                               while not reader.EndOfStream do
+                                   yield reader.ReadLine() }
                                
                     let loadedPhonebookHashTable = getPhonebook coupleOfNameAndPhoneSeq
             

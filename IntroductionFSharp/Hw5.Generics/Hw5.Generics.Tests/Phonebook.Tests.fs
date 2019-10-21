@@ -56,4 +56,4 @@ type PhonebookTestClass () =
     
     [<Test>]
     member this.``Test should fail on incorrect phone name while normalize.`` () =
-        normalizePhone "987incorrectPhone123" |> should equal phoneStringError     
+        normalizePhone "987incorrectPhone123" |> should equal phoneAlphabetError     
