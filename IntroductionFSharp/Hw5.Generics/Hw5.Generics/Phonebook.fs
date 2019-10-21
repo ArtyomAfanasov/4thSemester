@@ -64,6 +64,23 @@ let normalizePhone (phone : string) =
     with 
         | _ -> phoneStringError
 
+/// Получить базу из последовательности данных.
+let getPhonebook (coupleOfNameAndPhoneSeq : seq<string>) =
+    Seq.fold (fun (acc : Map<string,string>) (coupleInString : string)->
+        let nameAndPhone = coupleInString.Split [|' '|]
+
+        if nameAndPhone.Length = 2 then
+            let name, phone = nameAndPhone.[0], nameAndPhone.[1]
+            let normalizedPhone = normalizePhone phone
+
+            if normalizedPhone = phoneStringError then 
+                acc
+            else 
+                acc.Add(name, phone)                        
+        else
+            acc
+        ) Map.empty coupleOfNameAndPhoneSeq
+
 /// Вывести управление.
 let printInvitation () =
     printfn "\nДля выхода введите клавишу 'q'."   
@@ -152,15 +169,7 @@ let main argv =
                            while not reader.EndOfStream do
                                yield reader.ReadLine() }
                                
-                    let loadedPhonebookHashTable = 
-                        Seq.fold (fun (acc : Map<string,string>) (coupleInString : string)->
-                            let nameAndPhone = coupleInString.Split [|' '|]
-
-                            if nameAndPhone.Length = 2 then
-                                acc.Add(nameAndPhone.[0], nameAndPhone.[1])
-                            else
-                                acc
-                            ) Map.empty coupleOfNameAndPhoneSeq
+                    let loadedPhonebookHashTable = getPhonebook coupleOfNameAndPhoneSeq
             
                     interactiveMod loadedPhonebookHashTable
                 with
