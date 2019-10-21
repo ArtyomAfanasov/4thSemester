@@ -56,11 +56,8 @@ type PhonebookTestClass () =
     
     [<Test>]
     member this.``Test should fail on incorrect phone name while normalize.`` () =
-        (fun () -> normalizePhone "987incorrectPhone123" |> ignore)
-        |> should (throwWithMessage phoneStringError) typeof<System.Exception> 
+        normalizePhone "987incorrectPhone123" |> should equal phoneStringError 
     
     [<Test>]
-    member this.``Test`` () =
-        let phones = addRecord "name" "phone" Map.empty
-        let updatedPhones = addRecord "name" "phone" phones
-        ()
+    member this.``Test should correct ger base from string seq.`` () =
+        failwith ""
