@@ -1,6 +1,7 @@
 ﻿module PhonebookLogic
 
 open PhonebookErrors
+open System.IO
 
 /// Добавить запись (имя, телефон).
 let addRecord (name : string) (phone : string) (phonebookHashTable : Map<string,string>) = 
@@ -21,10 +22,6 @@ let findNameByPhone (phone : string) (phonebookHashTable : Map<string,string>) =
 let printAll phonebookHashTable =
     Map.iter (fun name phone ->
         printfn "Владалец телефона %s --- это %s" phone name) phonebookHashTable
-
-/// Сохранить данные в файл.
-let save () =
-    ()
 
 /// Нормализовать введённый номер.
 let normalizePhone (phone : string) = 
@@ -62,6 +59,20 @@ let getPhonebook (coupleOfNameAndPhoneSeq : seq<string>) =
         else
             acc
         ) Map.empty coupleOfNameAndPhoneSeq
+
+/// Сохранить базу в файл.
+let saveToFile (path  : string) (phonebookHashTable : Map<string,string>)=  
+    use file = File.CreateText(path)
+    Map.iter (fun name phone ->        
+        file.Write(name + " ", new obj())
+        file.WriteLine(phone, new obj())
+        ) phonebookHashTable
+
+let writetofile filename obj =
+   use file1 = File.CreateText(filename)
+   file1.WriteLine("{0}", obj.ToString() )
+   // file1.Dispose() is called implicitly here.
+
 
 /// Вывести управление.
 let printInvitation () =

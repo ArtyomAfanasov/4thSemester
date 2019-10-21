@@ -1,10 +1,9 @@
 ﻿namespace Hw5.Generics.Tests
 
-open FsCheck
-open Phonebook
 open NUnit.Framework
 open FsUnit
 open PhonebookErrors
+open PhonebookLogic
 
 [<TestFixture>]
 type PhonebookTestClass () =        
@@ -57,8 +56,4 @@ type PhonebookTestClass () =
     
     [<Test>]
     member this.``Test should fail on incorrect phone name while normalize.`` () =
-        normalizePhone "987incorrectPhone123" |> should equal phoneStringError 
-    
-    [<Test>]
-    member this.``Test should correct ger base from string seq.`` () =
-        failwith ""
+        normalizePhone "987incorrectPhone123" |> should equal phoneStringError     

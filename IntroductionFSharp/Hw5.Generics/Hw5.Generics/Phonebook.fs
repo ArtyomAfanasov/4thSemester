@@ -2,7 +2,6 @@
 module Phonebook
 
 open System.IO
-open System
 open PhonebookErrors
 open PhonebookLogic
 
@@ -56,10 +55,16 @@ let main argv =
 
             interactiveMod phonebookHashTable
         | "5" ->
-            // ToDO
+            System.Console.Clear() 
+            printfn "Введите абсолютный путь к файлу (должен содержать имя файла), в который сохранить данные."
 
-            
-            
+            let path = System.Console.ReadLine()
+
+            try 
+                saveToFile path phonebookHashTable
+            with 
+            | e -> printfn "%s" (e.ToString())
+                        
             interactiveMod phonebookHashTable
         | "6" ->
             System.Console.Clear()
