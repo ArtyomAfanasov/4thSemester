@@ -14,14 +14,13 @@ let findPhoneByName (name : string) (phonebookHashTable : Map<string,string>) =
 
 /// Найти имя по телефону.
 let findNameByPhone (phone : string) (phonebookHashTable : Map<string,string>) =
-    match Map.tryFindKey (fun name phoneElement ->  phoneElement = phone) phonebookHashTable with
+    match Map.tryFindKey (fun _ phoneElement ->  phoneElement = phone) phonebookHashTable with
     | Some(key) -> key
     | None -> keyNotFoundError
 
 /// Вывести все пары (имя, телефон) из базы.
 let printAll phonebookHashTable =
-    Map.iter (fun name phone ->
-        printfn "Владалец телефона %s --- это %s" phone name) phonebookHashTable
+    Map.iter (fun name phone -> printfn "Владалец телефона %s --- это %s" phone name) phonebookHashTable
 
 /// Нормализовать введённый номер.
 let normalizePhone (phone : string) = 
@@ -45,7 +44,7 @@ let normalizePhone (phone : string) =
 
 /// Получить базу из последовательности данных.
 let getPhonebook (coupleOfNameAndPhoneSeq : seq<string>) =
-    Seq.fold (fun (acc : Map<string,string>) (coupleInString : string)->
+    Seq.fold (fun (acc : Map<string,string>) (coupleInString : string) ->
         let nameAndPhone = coupleInString.Split [|' '|]
 
         if nameAndPhone.Length = 2 then
@@ -61,18 +60,15 @@ let getPhonebook (coupleOfNameAndPhoneSeq : seq<string>) =
         ) Map.empty coupleOfNameAndPhoneSeq
 
 /// Сохранить базу в файл.
-let saveToFile (path  : string) (phonebookHashTable : Map<string,string>)=  
-    use file = File.CreateText(path)
-    Map.iter (fun name phone ->        
-        file.Write(name + " ", new obj())
-        file.WriteLine(phone, new obj())
-        ) phonebookHashTable
-
-let writetofile filename obj =
-   use file1 = File.CreateText(filename)
-   file1.WriteLine("{0}", obj.ToString() )
-   // file1.Dispose() is called implicitly here.
-
+let saveToFile path phonebookHashTable =  
+    try 
+        use file = File.CreateText(path)
+        Map.iter (fun name phone ->        
+            file.Write(name + " ", new obj())
+            file.WriteLine(phone, new obj())
+            ) phonebookHashTable
+    with 
+        | e -> printfn "%s" (e.ToString())    
 
 /// Вывести управление.
 let printInvitation () =
