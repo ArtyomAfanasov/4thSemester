@@ -4,6 +4,7 @@ open FsCheck
 open Phonebook
 open NUnit.Framework
 open FsUnit
+open PhonebookErrors
 
 [<TestFixture>]
 type PhonebookTestClass () =        

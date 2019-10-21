@@ -6,12 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="PhonebookErrors.fs" />
+    <Compile Include="PhonebookLogic.fs" />
     <Compile Include="BracketsSequence.fs" />
     <Compile Include="Phonebook.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Core\" />
   </ItemGroup>
 
 </Project>
