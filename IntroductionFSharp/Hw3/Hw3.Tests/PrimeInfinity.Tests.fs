@@ -22,29 +22,6 @@ type SimpleInfinityTestClass () =
                        
         loopAssert 0
 
-        (*
-        // Нумерация элементов в посл-ти начинается с нуля.
-        let rec loop step acc =
-            match step with            
-            | _ when (Seq.item step primeInf) = 2 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 3 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 5 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 7 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 11 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 13 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 17 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 19 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 23 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 29 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 31 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 37 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 41 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 43 -> loop (step + 1) (acc + 1)
-            | _ -> acc
-
-        loop 0 0 |> should equal 14  
-        *)
-
     [<Test>]
     member this.``27's, 167's, 657's and 1000's numbers should be prime.`` () =
         let primeInf = generatePrimeInfinity ()       
