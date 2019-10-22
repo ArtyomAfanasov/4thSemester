@@ -14,15 +14,14 @@ type ArithmExprTree =
 let calculateValue arithmeticTree =       
     let rec loop operationOrValue = 
         match operationOrValue with   
-        //   \/  Нужен ли пробел?
-        | Plus(a, b) -> (loop a) + (loop b)         
-        | Minus(a, b) -> (loop a) - (loop b)
-        | Division(a, b) -> 
+        | Plus (a, b) -> (loop a) + (loop b)         
+        | Minus (a, b) -> (loop a) - (loop b)
+        | Division (a, b) -> 
             if (loop b = 0) then
                 failwith "Произошло деление на ноль."
             else
                 (loop a) / (loop b)
-        | Multiply(a, b) -> (loop a) * (loop b)  
-        | Value(a) -> a                 
+        | Multiply (a, b) -> (loop a) * (loop b)  
+        | Value (a) -> a                 
                                
     loop arithmeticTree

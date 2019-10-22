@@ -11,6 +11,18 @@ type SimpleInfinityTestClass () =
     member this.``First 14 number should be prime.`` () =
         let primeInf = generatePrimeInfinity ()       
                
+        let finalyPrimeSeq = [|2; 3; 5; 7; 11; 13; 17; 19; 23; 29|]
+
+        let rec loopAssert index =
+            match index with 
+            | 10 -> ()
+            | _ ->
+                Seq.item index primeInf |> should equal finalyPrimeSeq.[index]
+                loopAssert (index + 1)
+                       
+        loopAssert 0
+
+        (*
         // Нумерация элементов в посл-ти начинается с нуля.
         let rec loop step acc =
             match step with            
@@ -30,7 +42,8 @@ type SimpleInfinityTestClass () =
             | _ when (Seq.item step primeInf) = 43 -> loop (step + 1) (acc + 1)
             | _ -> acc
 
-        loop 0 0 |> should equal 14    
+        loop 0 0 |> should equal 14  
+        *)
 
     [<Test>]
     member this.``27's, 167's, 657's and 1000's numbers should be prime.`` () =
@@ -87,27 +100,17 @@ type SimpleInfinityTestClass () =
     [<Test>]
     member this.``First 14 number should be prime. Filter`` () =
         let primeInf = generatePrimeInfinityByFilter ()       
-               
-        // Нумерация элементов в посл-ти начинается с нуля.
-        let rec loop step acc =
-            match step with            
-            | _ when (Seq.item step primeInf) = 2 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 3 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 5 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 7 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 11 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 13 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 17 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 19 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 23 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 29 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 31 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 37 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 41 -> loop (step + 1) (acc + 1)
-            | _ when (Seq.item step primeInf) = 43 -> loop (step + 1) (acc + 1)
-            | _ -> acc
+       
+        let finalyPrimeSeq = [|2; 3; 5; 7; 11; 13; 17; 19; 23; 29|]
 
-        loop 0 0 |> should equal 14    
+        let rec loopAssert index =
+            match index with 
+            | 10 -> ()
+            | _ ->
+                Seq.item index primeInf |> should equal finalyPrimeSeq.[index]
+                loopAssert (index + 1)
+               
+        loopAssert 0 
 
     [<Test>]
     member this.``27's, 167's, 657's and 1000's numbers should be prime. ByFilter`` () =

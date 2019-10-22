@@ -21,7 +21,7 @@ type NewTreeTestClass () =
         
     // Название страшное...
     [<Test>]
-    member this.``updateTree on complex tree Subtree(1, Subtree(2, Dangling(4), Subtree (3, Dangling(4), TEmpty)), Dangling(2)) with givenFun (fun x -> x + "!") should return (Subtree("a!", Subtree("a!", Dangling("a!"), Subtree ("a!", Dangling("a!"), Empty)), Dangling("a!")))`` () =        
+    member this.``updateTree on complex tree should correct apply function.`` () =        
         updateTree (fun x -> x + "!") (Subtree("a", Subtree("a", Dangling("a"), Subtree ("a", Dangling("a"), Empty)), Dangling("a")))
         |> should equal (Subtree("a!", Subtree("a!", Dangling("a!"), Subtree ("a!", Dangling("a!"), Empty)), Dangling("a!")))
 
