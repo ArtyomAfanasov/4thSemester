@@ -6,6 +6,7 @@ open LazyFactory
 open ILazy
 open System.Threading
 open System.Diagnostics
+open System
 
 [<TestFixture>]
 type SyncedLazyTestClass () =
@@ -26,54 +27,37 @@ type SyncedLazyTestClass () =
     [<Test>]
     member this.``MultithreadingLazyShouldReturnCalculatedResultWithoutCalculation`` () =
         // assert
-        let syncedLazy = Factory.CreateSyncedLazy (fun () -> 
-            Thread.Sleep(10)
-            5)
-        
+        let invokeGetFrom (l : ILazy<obj>) = l.Get ()
+        let syncedLazy = Factory.CreateSyncedLazy (fun () -> new Object())                    
+
         // act
-        invokeGetFrom syncedLazy |> ignore
-
-        let stopwatch = Stopwatch.StartNew();
-        let result = invokeGetFrom syncedLazy
-        stopwatch.Stop()
-
+        let firstCalculatedResult = invokeGetFrom syncedLazy
+        let isSecondResult = invokeGetFrom syncedLazy
+        
         // assert
-        result |> should equal 5
-        stopwatch.ElapsedMilliseconds |> should lessThan 10
-    
+        Object.ReferenceEquals(firstCalculatedResult, isSecondResult) |> should equal true
+       
     [<Test>]
-    member this.``MultithreadingLazyShouldCalculateOneTimeWhen50Threads`` () =
+    member this.``Must not be race.`` () =        
         // arrange
-        let syncedLazy = Factory.CreateSyncedLazy (fun () -> 
-            
-            // 50 мс должно ведь хватить, да? Где Вы читали, что на квант времени выделено 20-30 секунд, а потом происходит переключение контекста?
-            // У .NET алгоритм переключение потоков располагает функцией передачи управления другому потоку, если данный поток выполнил свою работу за время,
-            // меньшее кванта времени? 
-            // 
-            // Если судить по данному тесту, то должен располагать :) 
-            // Но по одной из аксиом: в каждой программе есть ошибка (= 
-            // Поэтому сомневаюсь.
-            Thread.Sleep(50)
-            5)
-        let mutable result = 0
-        let calculate () = 
-            result <- invokeGetFrom syncedLazy            
-        let threads = Array.init 10 (fun index -> new Thread(calculate))        
-
-        // act
-        let stopwatch = Stopwatch.StartNew();
-        
-        // По логике написанных Start'а и Join'а, мы ждём те потоки, которые ещё работают?
-        for thread in threads do
-            thread.Start()                
-        for thread in threads do
-            thread.Join()    
-        stopwatch.Stop()
-
+        let invokeGetFrom (l : ILazy<obj>) = l.Get ()
+        let syncedLazy = Factory.CreateLockFreeLazy (fun () -> new Object())       
+    
         // assert
-        result |> should equal 5
-        stopwatch.ElapsedMilliseconds |> should lessThan 60
-        
+        let firstCalculatedResult = invokeGetFrom syncedLazy
+
+        let calculationSeq = seq { for i in 1..100 -> syncedLazy }
+        calculationSeq 
+        |>
+        Seq.map (fun worker ->
+            async {
+                let isOtherResult = invokeGetFrom worker
+                Object.ReferenceEquals(firstCalculatedResult, isOtherResult) |> should equal true
+            })
+        |> Async.Parallel
+        |> Async.RunSynchronously
+        |> ignore
+
     [<Test>]
     member this.``IsValueCalculatedPropertyShouldShowCorrectSituation`` () =
         // arrange
