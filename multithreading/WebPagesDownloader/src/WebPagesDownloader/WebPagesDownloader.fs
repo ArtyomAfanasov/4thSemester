@@ -20,37 +20,28 @@ module WebPagesDownloader
         let downloadHtml url = 
             async {
                 do printfn "Creating request for %s..." url
-                try                
+                try
                     let request = WebRequest.Create(url)
                     use! response = request.AsyncGetResponse() 
                     do printfn "Getting response stream for %s..." url
                     use stream = response.GetResponseStream()
                     if stream = null then 
                         printf "Stream from response is null. Exit from downloading process."
-                        return "-1"
+                        return None
                     else 
                         do printfn "Reading response for %s..." url
                         use reader = new StreamReader(stream)
-                        return reader.ReadToEnd()
+                        return Some(reader.ReadToEnd())
                 with 
                 | :? System.Security.SecurityException as e ->
                     printfn "%s" e.Message
-                    return "-1"
+                    return None
                 | :? System.Net.WebException as e -> 
                     printfn "%s" e.Message
-                    return "-1"
-                | :? System.NotSupportedException as e ->
-                    printfn "%s" e.Message
-                    return "-1"
-                | :? System.ArgumentException as e ->
-                    printfn "%s" e.Message
-                    return "-1"
-                | :? System.OutOfMemoryException as e ->
-                    printfn "%s" e.Message
-                    return "-1"
+                    return None
                 | :? System.IO.IOException as e ->
                     printfn "%s" e.Message
-                    return "-1"                
+                    return None
             }
 
         /// Применить регулярное выражение к html-коду страницы.
@@ -72,8 +63,8 @@ module WebPagesDownloader
                     async {
                         let! html = downloadHtml url
                         match html with
-                        | "-1" -> printfn "Exit from `PrintSizeOfAllInnerWebPages` method."
-                        | _ -> do printfn "%s --- %i" url html.Length
+                        | None -> printfn "Exit from `PrintSizeOfAllInnerWebPages` method."
+                        | _ -> do printfn "%s --- %i" url (Option.get html).Length
                     })
                 |> Async.Parallel            
                 |> Async.RunSynchronously
@@ -85,9 +76,9 @@ module WebPagesDownloader
                 do printfn "Let's do this with %s!" url
                 let! mainHtml = downloadHtml url
                 match mainHtml with
-                | "-1" -> printfn "Exit from `PrintSizeOfAllInnerWebPages` method."
+                | None -> printfn "Exit from `PrintSizeOfAllInnerWebPages` method."
                 | _ ->            
-                    let innerPages = matchHtml mainHtml (new List<string>())
+                    let innerPages = matchHtml (Option.get mainHtml) (new List<string>())
     
                     do printfn "Print couple `ulr * amount of characters` for inner web pages..."
             
@@ -103,12 +94,21 @@ module WebPagesDownloader
             }   
         
         /// Вывести все пары `(адрес страницы * число символов)` для веб-страниц, указанных в данной.
-        member this.PrintSizeOfAllInnerWebPages url = 
-            if url = null then 
-                printError "Null is not allow."                
-            elif System.Uri.IsWellFormedUriString(url, System.UriKind.RelativeOrAbsolute) <> true then
-                printError "Uri is invalid."         
-            else printSizeOfAllInnerWebPages url
+        member this.PrintSizeOfAllInnerWebPages (url : string) = 
+            let client = new WebClient()
+            
+            try 
+                client.DownloadString(url) |> ignore
+
+                if url = null then 
+                    printError "Null is not allow."                
+                elif not <| System.Uri.IsWellFormedUriString(url, System.UriKind.RelativeOrAbsolute) then
+                    printError "Uri is invalid."         
+                else 
+                    printSizeOfAllInnerWebPages url
+            with
+                | :? System.Net.WebException as e -> 
+                    raise e
 
     [<EntryPoint>]
     let main arg =
