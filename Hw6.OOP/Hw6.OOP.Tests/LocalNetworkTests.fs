@@ -6,17 +6,17 @@ open Foq
 open Virus   
 
 [<TestFixture>]
-type LocalNetworkTests () =    
+type LocalNetworkTests() =    
     /// Computer info.
-    let getComputers () = [|("1", Linux, true); 
-                            ("2", Windows, false); 
-                            ("3", MacOS, false); 
-                            ("4", Other, false); 
-                            ("5", Linux, false); 
-                            ("6", Windows, false); 
-                            ("7", Other, false); 
-                            ("8", MacOS, false); 
-                            ("9", Other, false)|]
+    let getComputers () = [|{ Name = "1"; OS = Linux; Infected = true }; 
+                            { Name = "2"; OS = Windows; Infected = false };
+                            { Name = "3"; OS = MacOS; Infected = false };
+                            { Name = "4"; OS = Other; Infected = false };
+                            { Name = "5"; OS = Linux; Infected = false };
+                            { Name = "6"; OS = Windows; Infected = false };
+                            { Name = "7"; OS = Other; Infected = false };
+                            { Name = "8"; OS = MacOS; Infected = false };
+                            { Name = "9"; OS = Other; Infected = false }|]    
 
     /// All computers are connected.
     let _fullConnections = array2D [[0; 1; 0; 1; 0; 0; 0; 0; 0];
@@ -28,10 +28,7 @@ type LocalNetworkTests () =
                                     [0; 0; 0; 1; 0; 0; 0; 1; 0];
                                     [0; 0; 0; 0; 1; 0; 1; 0; 1];
                                     [0; 0; 0; 0; 0; 1; 0; 1; 0];]
-                              
-    /// Return third element of the tuple.
-    let third (_, _, c) = c
-
+    
     [<Test>]
     member this.``With 100% resistance virus should not expand.`` () =
         // arrange
@@ -52,7 +49,7 @@ type LocalNetworkTests () =
            
         // assert
         Seq.fold (fun acc elem -> 
-                    if third elem then acc 
+                    if elem.Infected then acc 
                     else (acc + 1)) 0 network.Computers
         |> should equal 8
     
@@ -71,7 +68,7 @@ type LocalNetworkTests () =
             let rec loop n =                
                 if n = 3 then ()
                 else 
-                    third (Seq.item (List.item n [0; 1; 3]) epoch) |> should equal isIll
+                    (Seq.item (List.item n [0; 1; 3]) epoch).Infected |> should equal isIll
                     loop (n + 1)
                 
             loop 0
@@ -80,7 +77,7 @@ type LocalNetworkTests () =
             let rec loop n =                
                 if n = 3 then ()
                 else 
-                    third (Seq.item (List.item n [2; 4; 6]) epoch) |> should equal isIll
+                    (Seq.item (List.item n [2; 4; 6]) epoch).Infected |> should equal isIll
                     loop (n + 1)
             
             loop 0
@@ -89,7 +86,7 @@ type LocalNetworkTests () =
             let rec loop n =                
                 if n = 2 then ()
                 else 
-                    third (Seq.item (List.item n [5; 7]) epoch) |> should equal isIll
+                    (Seq.item (List.item n [5; 7]) epoch).Infected |> should equal isIll
                     loop (n + 1)
             
             loop 0
@@ -100,37 +97,37 @@ type LocalNetworkTests () =
         checkVirusInFirstSet true computersInFirstEpoch
         checkVirusInSecondSet false computersInFirstEpoch
         checkVirusInThirdSet false computersInFirstEpoch
-        Seq.item 8 computersInFirstEpoch |> third |> should equal false
+        (Seq.item 8 computersInFirstEpoch).Infected |> should equal false
 
         network.NewEpoch ()
         let computersInSecondEpoch = network.Computers
         checkVirusInFirstSet true computersInSecondEpoch
         checkVirusInSecondSet true computersInSecondEpoch
         checkVirusInThirdSet false computersInSecondEpoch
-        Seq.item 8 computersInSecondEpoch |> third |> should equal false
+        (Seq.item 8 computersInSecondEpoch).Infected |> should equal false
 
         network.NewEpoch ()
         let computersInThirdEpoch = network.Computers
         checkVirusInFirstSet true computersInThirdEpoch
         checkVirusInSecondSet true computersInThirdEpoch
         checkVirusInThirdSet true computersInThirdEpoch
-        Seq.item 8 computersInThirdEpoch |> third |> should equal false
+        (Seq.item 8 computersInThirdEpoch).Infected |> should equal false
 
         network.NewEpoch ()
         let computersInFourthEpoch = network.Computers
         checkVirusInFirstSet true computersInFourthEpoch
         checkVirusInSecondSet true computersInFourthEpoch
         checkVirusInThirdSet true computersInFourthEpoch
-        Seq.item 8 computersInFourthEpoch |> third |> should equal true
-        
+        (Seq.item 8 computersInFourthEpoch).Infected |> should equal true          
+
     [<Test>]
     member this.``Should show correct state with 0% resistance.`` () =
         // arrange
         let alias = Other        
         
-        let computersInfo = [|("1", alias, true);
-                          ("2", alias, false);
-                          ("3", alias, false)|]
+        let computersInfo = [|{ Name = "1"; OS = alias; Infected = true };
+                            { Name = "2"; OS = alias; Infected = false };
+                            { Name = "3"; OS = alias; Infected = false }|]
 
         let connections = array2D [[0; 1; 0];
                                    [1; 0; 1];

@@ -22,24 +22,18 @@ type OS =
     | MacOS
     | Other
 
+/// Информация об имени, ОС, здоровье компьютера.
+type ComputerInfo = { Name: string; OS: OS; Infected: bool}
+
 /// Моделирует работу локальной сети. OS: linux, windows, macos, other.
-type LocalNetwork(computers : (string * OS * bool)[], connections : int[,], resistance : IResistance) =         
+type LocalNetwork(computers : ComputerInfo[], connections : int[,], resistance : IResistance) =         
         
-    /// Получить первый элемент кортежа.
-    let first (a, _, _) = a
-
-    /// Получить второй элемент кортежа.
-    let second (_, b, _) = b
-
-    /// Получить третий элемент кортежа.
-    let third (_, _, c) = c 
-    
     /// Список операционных систем в локальной сети.
     let mutable _computers = 
         let mutable inner = computers
         
-        Seq.iteri (fun index PC ->     
-            inner.[index] <- (first PC, second PC (*lowerCaseOSName*), third PC)) inner
+        Seq.iteri (fun index PC ->
+            inner.[index] <- { Name = PC.Name; OS = PC.OS; Infected = PC.Infected }) inner
         
         inner
 
@@ -65,14 +59,14 @@ type LocalNetwork(computers : (string * OS * bool)[], connections : int[,], resi
     let random = System.Random()    
 
     /// Попытаться заразить компьютер.
-    let tryInfect indexOfPrey preyInfo = 
-        let innerAttemptInfection nameOfOS = 
+    let tryInfect indexOfPrey (preyInfo : ComputerInfo) =
+        let innerAttemptInfection nameOfOS =
             let bigIsDangerous = random.Next(0, 100)
             if bigIsDangerous > OSResistance.Item nameOfOS then
-                _computers.[indexOfPrey] <- (first preyInfo, second preyInfo, true)
+                _computers.[indexOfPrey] <- { Name = preyInfo.Name; OS = preyInfo.OS; Infected = true } //(first preyInfo, second preyInfo, true)
                 isNewbie.[indexOfPrey] <- true
 
-        match second preyInfo with
+        match preyInfo.OS with
         | Linux -> innerAttemptInfection Linux
         | Windows -> innerAttemptInfection Windows            
         | MacOS -> innerAttemptInfection MacOS            
@@ -96,7 +90,7 @@ type LocalNetwork(computers : (string * OS * bool)[], connections : int[,], resi
 
                 // Попытаться заразить жертву:
                 let preyInfo = _computers.[index]
-                if third preyInfo then loop (index + 1)
+                if preyInfo.Infected then loop (index + 1)
                 else 
                     tryInfect index preyInfo
                     loop (index + 1)
@@ -109,7 +103,7 @@ type LocalNetwork(computers : (string * OS * bool)[], connections : int[,], resi
         let rec findPCWithVirus index = 
             if index = lengthOfComputers then ()
             else
-                if third _computers.[index] && not <| isNewbie.[index] then
+                if _computers.[index].Infected && not <| isNewbie.[index] then
                     findConnectedComputers index
                     findPCWithVirus (index + 1)
                 else findPCWithVirus (index + 1)
@@ -121,7 +115,7 @@ type LocalNetwork(computers : (string * OS * bool)[], connections : int[,], resi
     /// Состояние сети.
     let showState () = 
         Seq.fold (fun state PC ->
-            (state + first PC + " " + (second PC).ToString() + " " + (third PC).ToString() + "\n")) "" _computers
+            (state + PC.Name + " " + (PC.OS).ToString() + " " + (PC.Infected).ToString() + "\n")) "" _computers
     
     /// Новый этап жизни вируса в локальной сети.
     member this.NewEpoch() = newEpoch ()
@@ -133,7 +127,7 @@ type LocalNetwork(computers : (string * OS * bool)[], connections : int[,], resi
     member this.ShowState() = showState ()
     
     /// Инициализирует новый экземпляр класса LocalNetwork с сопротивлением к вирусам по умолчанию.
-    new(computers : (string * OS * bool)[], connections : int[,]) = LocalNetwork(computers, connections, DefaultResistance())        
+    new(computers : ComputerInfo[], connections : int[,]) = LocalNetwork(computers, connections, DefaultResistance())        
         
 [<EntryPoint>]
 let main argv =       
