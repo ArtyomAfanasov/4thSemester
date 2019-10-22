@@ -7,18 +7,18 @@ open Virus
 
 [<TestFixture>]
 type LocalNetworkTests () =    
-    /// Информация о компьютерах.
-    let getComputers () = [|("1", "linux", true); 
-                            ("2", "windows", false); 
-                            ("3", "macos", false); 
-                            ("4", "other", false); 
-                            ("5", "linux", false); 
-                            ("6", "windows", false); 
-                            ("7", "other", false); 
-                            ("8", "macos", false); 
-                            ("9", "other", false)|]
+    /// Computer info.
+    let getComputers () = [|("1", Linux, true); 
+                            ("2", Windows, false); 
+                            ("3", MacOS, false); 
+                            ("4", Other, false); 
+                            ("5", Linux, false); 
+                            ("6", Windows, false); 
+                            ("7", Other, false); 
+                            ("8", MacOS, false); 
+                            ("9", Other, false)|]
 
-    /// Все компьютеры соединены.
+    /// All computers are connected.
     let _fullConnections = array2D [[0; 1; 0; 1; 0; 0; 0; 0; 0];
                                     [1; 0; 1; 0; 1; 0; 0; 0; 0];
                                     [0; 1; 0; 0; 0; 1; 0; 0; 0];
@@ -29,13 +29,13 @@ type LocalNetworkTests () =
                                     [0; 0; 0; 0; 1; 0; 1; 0; 1];
                                     [0; 0; 0; 0; 0; 1; 0; 1; 0];]
                               
-    /// Вернуть третий элемент кортежа.
+    /// Return third element of the tuple.
     let third (_, _, c) = c
 
     [<Test>]
     member this.``With 100% resistance virus should not expand.`` () =
-        // assert
-        let resistance = Mock<Resistance>()
+        // arrange
+        let resistance = Mock<IResistance>()
                             .Setup(fun x -> <@ x.LinuxResistance @>).Returns(100)
                             .Setup(fun x -> <@ x.MacOSResistance @>).Returns(100)
                             .Setup(fun x -> <@ x.WindowsResistance @>).Returns(100)
@@ -46,7 +46,7 @@ type LocalNetworkTests () =
         // act 
         let rec loop n =
             network.NewEpoch ()
-            if n > 0 then loop (n-1)
+            if n > 0 then loop (n - 1)
             else ()
         loop 10
            
@@ -59,7 +59,7 @@ type LocalNetworkTests () =
     [<Test>]
     member this.``With 0% resistance virus should expand like BFS.`` () =
         // arrange
-        let resistance = Mock<Resistance>()
+        let resistance = Mock<IResistance>()
                             .Setup(fun x -> <@ x.LinuxResistance @>).Returns(0)
                             .Setup(fun x -> <@ x.MacOSResistance @>).Returns(0)
                             .Setup(fun x -> <@ x.WindowsResistance @>).Returns(0)
@@ -126,27 +126,30 @@ type LocalNetworkTests () =
     [<Test>]
     member this.``Should show correct state with 0% resistance.`` () =
         // arrange
-        let computersInfo = [|("1", "someos", true);
-                          ("2", "someos", false);
-                          ("3", "someos", false)|]
+        let alias = Other        
+        
+        let computersInfo = [|("1", alias, true);
+                          ("2", alias, false);
+                          ("3", alias, false)|]
 
         let connections = array2D [[0; 1; 0];
                                    [1; 0; 1];
                                    [0; 1; 0]]
 
-        let resistance = Mock<Resistance>()
+        let resistance = Mock<IResistance>()
                             .Setup(fun x -> <@ x.LinuxResistance @>).Returns(0)
                             .Setup(fun x -> <@ x.MacOSResistance @>).Returns(0)
                             .Setup(fun x -> <@ x.WindowsResistance @>).Returns(0)
                             .Setup(fun x -> <@ x.OtherOSResistance @>).Returns(0)
                             .Create()
         let network = LocalNetwork(computersInfo, connections, resistance)
+
                 
         // assert
-        network.ShowState () |> should equal "1 someos True\n2 someos False\n3 someos False\n"
+        network.ShowState () |> should equal ("1 " + (alias.ToString()) + " True\n2 " + alias.ToString() + " False\n3 " + alias.ToString() + " False\n")
 
         network.NewEpoch () 
-        network.ShowState () |> should equal "1 someos True\n2 someos True\n3 someos False\n"
+        network.ShowState () |> should equal ("1 " + (alias.ToString()) + " True\n2 " + alias.ToString() + " True\n3 " + alias.ToString() + " False\n")
         
         network.NewEpoch () 
-        network.ShowState () |> should equal "1 someos True\n2 someos True\n3 someos True\n"
+        network.ShowState () |> should equal ("1 " + (alias.ToString()) + " True\n2 " + alias.ToString() + " True\n3 " + alias.ToString() + " True\n")
