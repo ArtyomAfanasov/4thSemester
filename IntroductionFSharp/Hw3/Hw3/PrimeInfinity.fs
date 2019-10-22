@@ -6,14 +6,17 @@ let generatePrimeInfinity () =
     let dirtyInfinity = Seq.initInfinite (fun index ->
         let number = index + 2
                 
-        let rec loop lessThanCurrentNumber =
-            match lessThanCurrentNumber with 
-            | _ when number = lessThanCurrentNumber -> true
-            | _ -> 
-                if (number % lessThanCurrentNumber = 0) then false
-                else loop (lessThanCurrentNumber + 1)
+        let checkPrime number = 
+            true
 
-        let isPrime = loop 2
+        //let rec loop lessThanCurrentNumber =
+        //    match lessThanCurrentNumber with
+        //    | _ when number = lessThanCurrentNumber -> true
+        //    | _ -> 
+        //        if (number % lessThanCurrentNumber = 0) then false
+        //        else loop (lessThanCurrentNumber + 1)
+
+        let isPrime = checkPrime number
         
         if isPrime then number
         else 0)
