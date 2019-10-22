@@ -11,7 +11,6 @@ let main argv =
     let rec interactiveMod phonebookHashTable = 
         printInvitation ()
         let request = Console.ReadLine()
-        Console.Clear()
 
         match request with 
         | "q" -> 
@@ -31,14 +30,16 @@ let main argv =
             else 
                 let updatedPhonebookHashTable = addRecord name normalizedPhone phonebookHashTable
                 interactiveMod updatedPhonebookHashTable
+
         | "2" -> 
             Console.Clear()
             printfn "Введите имя, по которому будет производиться поиск."
             let name = Console.ReadLine().Trim()
 
             let result = findPhoneByName name phonebookHashTable
-            if result = keyNotFoundError then printfn "%s" keyNotFoundError
-            else printfn "%s имеет следующий телефон: %s\n\n" name result
+            match result with
+            | Some (x) -> printfn "%s имеет следующий телефон: %s\n\n" name x
+            | None -> printfn "%s" keyNotFoundError
             
             interactiveMod phonebookHashTable
         | "3" ->
@@ -47,9 +48,10 @@ let main argv =
             printfn "Введите телефон, по которому будет производиться поиск."
             let phone = Console.ReadLine().Trim()
 
-            let result = findNameByPhone phone phonebookHashTable
-            if result = keyNotFoundError then printfn "%s" keyNotFoundError
-            else printfn "Телефон %s имеет: %s\n\n" phone result
+            let result = (findNameByPhone phone phonebookHashTable)
+            match result with 
+            | Some (x) -> printfn "Телефон %s имеет: %s\n\n" phone x
+            | None -> printfn "%s" keyNotFoundError
             
             interactiveMod phonebookHashTable
         | "4" ->
@@ -87,7 +89,7 @@ let main argv =
                                use reader = new StreamReader(File.OpenRead(path))
                                while not reader.EndOfStream do
                                    yield reader.ReadLine() }
-                               
+                                   
                     let loadedPhonebookHashTable = getPhonebook coupleOfNameAndPhoneSeq
             
                     interactiveMod loadedPhonebookHashTable
@@ -97,9 +99,6 @@ let main argv =
                         interactiveMod phonebookHashTable
                     | :? IO.DirectoryNotFoundException -> 
                         printfn "%s" directoryNotFoundError
-                        interactiveMod phonebookHashTable
-                    | e ->
-                        printfn "%s" (e.ToString())
                         interactiveMod phonebookHashTable
 
         | _ -> interactiveMod phonebookHashTable

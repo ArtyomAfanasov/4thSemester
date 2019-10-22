@@ -20,35 +20,35 @@ type PhonebookTestClass () =
         let phones = addRecord "name" "phone" Map.empty
         let updatedPhones = addRecord "name_2" "phone_2" phones
         
-        findPhoneByName "name" updatedPhones |> should equal "phone"
-        findPhoneByName "name_2" updatedPhones |> should equal "phone_2"        
+        Option.get (findPhoneByName "name" updatedPhones) |> should equal "phone"
+        Option.get (findPhoneByName "name_2" updatedPhones) |> should equal "phone_2"        
     
     [<Test>]
     member this.``Test should not find phone by not existed name.`` () =
         let phones = addRecord "name" "phone" Map.empty
         
-        findPhoneByName "notExistedName" phones |> should equal keyNotFoundError    
+        findPhoneByName "notExistedName" phones |> should equal None //keyNotFoundError    
     
     [<Test>]
     member this.``Test should not find phone in empty phonebook.`` () =
-        findPhoneByName "notExistedName" Map.empty |> should equal keyNotFoundError    
+        findPhoneByName "notExistedName" Map.empty |> should equal  None // keyNotFoundError    
     
     [<Test>]
     member this.``Test should not find name by phone.`` () =
         let phones = addRecord "name" "phone" Map.empty
         let updatedPhones = addRecord "name_2" "phone_2" phones
 
-        findNameByPhone "phone" updatedPhones |> should equal "name"
-        findNameByPhone "phone_2" updatedPhones |> should equal "name_2"
+        Option.get (findNameByPhone "phone" updatedPhones) |> should equal "name"
+        Option.get (findNameByPhone "phone_2" updatedPhones) |> should equal "name_2"
     
     [<Test>]
     member this.``Test should not find name by not existed phone.`` () =
         let phones = addRecord "name" "phone" Map.empty
-        findNameByPhone "notExistedPhone" phones |> should equal keyNotFoundError
+        findNameByPhone "notExistedPhone" phones |> should equal None // keyNotFoundError
     
     [<Test>]
     member this.``Test should not find name in empty phonebook.`` () =
-        findNameByPhone "notExistedName" Map.empty |> should equal keyNotFoundError    
+        findNameByPhone "notExistedName" Map.empty |> should equal None //keyNotFoundError    
     
     [<Test>]
     member this.``Test should correct normalize phone.`` () =
@@ -56,4 +56,4 @@ type PhonebookTestClass () =
     
     [<Test>]
     member this.``Test should fail on incorrect phone name while normalize.`` () =
-        normalizePhone "987incorrectPhone123" |> should equal phoneAlphabetError     
+        (fun () -> normalizePhone "987incorrectPhone123" |> ignore) |> should throw typeof<System.Exception>     

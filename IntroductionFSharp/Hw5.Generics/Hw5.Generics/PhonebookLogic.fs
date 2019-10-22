@@ -9,14 +9,12 @@ let addRecord name phone (phonebookHashTable : Map<string, string>) =
 
 /// Найти номер по имени.
 let findPhoneByName name (phonebookHashTable : Map<string, string>) = 
-    if not <| phonebookHashTable.ContainsKey(name) then keyNotFoundError
-    else phonebookHashTable.Item(name)     
+    if not <| phonebookHashTable.ContainsKey(name) then None
+    else Some(phonebookHashTable.Item(name))
 
 /// Найти имя по телефону.
 let findNameByPhone phone (phonebookHashTable : Map<string, string>) =
-    match Map.tryFindKey (fun _ phoneElement ->  phoneElement = phone) phonebookHashTable with
-    | Some(key) -> key
-    | None -> keyNotFoundError
+    Map.tryFindKey (fun _ phoneElement ->  phoneElement = phone) phonebookHashTable
 
 /// Вывести все пары (имя, телефон) из базы.
 let printAll phonebookHashTable =
@@ -24,21 +22,18 @@ let printAll phonebookHashTable =
 
 /// Нормализовать введённый номер.
 let normalizePhone (phone : string) = 
-    try 
-        let normalizedCharSeq =
-            Seq.filter (fun letter -> 
-                match letter with
-                | '+' | '(' | ')' | '-' -> false
-                | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' -> true
-                | _ -> failwith phoneAlphabetError
-                ) phone
+    let normalizedCharSeq =
+        Seq.filter (fun letter -> 
+            match letter with
+            | '+' | '(' | ')' | '-' -> false
+            | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' -> true
+            | _ -> raise (new System.Exception())
+            ) phone
 
-        let normalizedStringSeq = 
-            Seq.map(fun letter -> letter.ToString()) normalizedCharSeq
+    let normalizedStringSeq = 
+        Seq.map(fun letter -> letter.ToString()) normalizedCharSeq
 
-        String.concat "" normalizedStringSeq        
-    with 
-        | _ -> phoneAlphabetError
+    String.concat "" normalizedStringSeq        
 
 /// Получить базу из последовательности данных.
 let getPhonebook (coupleOfNameAndPhoneSeq : seq<string>) =
