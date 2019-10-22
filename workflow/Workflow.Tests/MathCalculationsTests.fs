@@ -3,6 +3,8 @@ namespace Workflow.Tests
 open NUnit.Framework
 open FsUnit
 open MathCalculations
+open System
+open NUnit.Framework.Constraints
 
 [<TestFixture>]
 type MathCalculationsTestsClass () =
@@ -17,9 +19,8 @@ type MathCalculationsTestsClass () =
                 let! b = 3.5
                 return a / b
             }
-
-        // assert
-        result |> should equal 0.048
+                
+        result |> should (equalWithin 0.0001) 0.048        
        
     [<Test>]
     member this.``RoundingToZeroSignForDivide`` () =
@@ -40,7 +41,7 @@ type MathCalculationsTestsClass () =
         let result = rounding 1 { return 1.5 * 3.0 }
 
         // assert
-        result |> should equal 4.5 
+        result |> should (equalWithin 0.0001) 4.5 
     
     [<Test>]
     member this.``RoundingToOneSignForSumAndMinus`` () =
@@ -53,7 +54,7 @@ type MathCalculationsTestsClass () =
                 }
 
         // assert
-        result |> should equal 5.2
+        result |> should (equalWithin 0.0001) 5.2
     
     [<Test>]
     member this.``RoundingToOneSignForPowAndSqrt`` () =
@@ -66,7 +67,7 @@ type MathCalculationsTestsClass () =
                 }
 
         // assert
-        result |> should equal 3.0
+        result |> should (equalWithin 0.0001) 3.0
     
     [<Test>]
     member this.``WithComputationalAccuracyArgumentMoreThan15ShouldFail`` () =
