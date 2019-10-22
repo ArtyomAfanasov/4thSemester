@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="OS.fs" />
+    <Compile Include="Computer.fs" />
     <Compile Include="LocalNetwork.fs" />
   </ItemGroup>
 

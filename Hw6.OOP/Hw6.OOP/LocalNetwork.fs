@@ -1,69 +1,35 @@
 ﻿module Virus
 
-/// Абстрактный класс с данными о сопротивляемости вирусам разных ОС.
-type IResistance =       
-    abstract member LinuxResistance: int
-    abstract member MacOSResistance: int
-    abstract member WindowsResistance: int
-    abstract member OtherOSResistance: int
-
-/// Стандартная сопротивляемость вирусам.
-type DefaultResistance() =
-    interface IResistance with
-        member this.LinuxResistance = 70
-        member this.MacOSResistance = 60
-        member this.WindowsResistance = 30
-        member this.OtherOSResistance = 75
-
-/// Операционные системы.
-type OS =
-    | Linux
-    | Windows
-    | MacOS
-    | Other
-
-/// Информация об имени, ОС, здоровье компьютера.
-type ComputerInfo = { Name: string; OS: OS; Infected: bool}
+open Computer
+open OS
 
 /// Моделирует работу локальной сети. OS: linux, windows, macos, other.
-type LocalNetwork(computers : ComputerInfo[], connections : int[,], resistance : IResistance) =         
+type LocalNetwork(computers : Computer[], connections : int[,], resistance : IResistance) =         
         
-    /// Список операционных систем в локальной сети.
-    let mutable _computers = 
-        let mutable inner = computers
-        
-        Seq.iteri (fun index PC ->
-            inner.[index] <- { Name = PC.Name; OS = PC.OS; Infected = PC.Infected }) inner
-        
-        inner
-
     /// Вспомогательный массив для избежания заражения через вновь заражённых.
-    let mutable isNewbie = Array.create _computers.Length false
-
-    /// Сопротивление операционных систем.
-    let _resistance = resistance
+    let isNewbie = Array.create computers.Length false
 
     /// Длина первого измерения (отвечает за соединение с другими ПК) двумерного массива соединений.   
     let lengthOfConnections = Array2D.length1 connections
 
     /// Количество компьютеров в сети.
-    let lengthOfComputers = _computers.Length  
+    let lengthOfComputers = computers.Length  
     
     /// Сопротивляемость ОС.
-    let OSResistance = Map.ofList [ (Linux, _resistance.LinuxResistance); 
-                                    (Windows, _resistance.WindowsResistance); 
-                                    (MacOS, _resistance.MacOSResistance); 
-                                    (Other, _resistance.OtherOSResistance) ]  
+    let OSResistance = Map.ofList [ (Linux, resistance.LinuxResistance); 
+                                    (Windows, resistance.WindowsResistance); 
+                                    (MacOS, resistance.MacOSResistance); 
+                                    (Other, resistance.OtherOSResistance) ]  
     
     /// Объект для случайных величин.
     let random = System.Random()    
 
     /// Попытаться заразить компьютер.
-    let tryInfect indexOfPrey (preyInfo : ComputerInfo) =
+    let tryInfect indexOfPrey (preyInfo : Computer) =
         let innerAttemptInfection nameOfOS =
             let bigIsDangerous = random.Next(0, 100)
             if bigIsDangerous > OSResistance.Item nameOfOS then
-                _computers.[indexOfPrey] <- { Name = preyInfo.Name; OS = preyInfo.OS; Infected = true } //(first preyInfo, second preyInfo, true)
+                computers.[indexOfPrey] <- new Computer(preyInfo.Name, preyInfo.OS, true)
                 isNewbie.[indexOfPrey] <- true
 
         match preyInfo.OS with
@@ -89,7 +55,7 @@ type LocalNetwork(computers : ComputerInfo[], connections : int[,], resistance :
             elif connections.[fromThisComputer, index] = 1 then                
 
                 // Попытаться заразить жертву:
-                let preyInfo = _computers.[index]
+                let preyInfo = computers.[index]
                 if preyInfo.Infected then loop (index + 1)
                 else 
                     tryInfect index preyInfo
@@ -103,7 +69,7 @@ type LocalNetwork(computers : ComputerInfo[], connections : int[,], resistance :
         let rec findPCWithVirus index = 
             if index = lengthOfComputers then ()
             else
-                if _computers.[index].Infected && not <| isNewbie.[index] then
+                if computers.[index].Infected && not <| isNewbie.[index] then
                     findConnectedComputers index
                     findPCWithVirus (index + 1)
                 else findPCWithVirus (index + 1)
@@ -114,20 +80,20 @@ type LocalNetwork(computers : ComputerInfo[], connections : int[,], resistance :
 
     /// Состояние сети.
     let showState () = 
-        Seq.fold (fun state PC ->
-            (state + PC.Name + " " + (PC.OS).ToString() + " " + (PC.Infected).ToString() + "\n")) "" _computers
+        Seq.fold (fun state (PC : Computer) ->
+            (state + PC.Name + " " + (PC.OS).ToString() + " " + (PC.Infected).ToString() + "\n")) "" computers
     
     /// Новый этап жизни вируса в локальной сети.
     member this.NewEpoch() = newEpoch ()
 
     /// Информация о компьютерах: имя, OS, заражён ли.
-    member this.Computers = _computers
+    member this.Computers = computers
 
     /// Состояние сети.
     member this.ShowState() = showState ()
     
     /// Инициализирует новый экземпляр класса LocalNetwork с сопротивлением к вирусам по умолчанию.
-    new(computers : ComputerInfo[], connections : int[,]) = LocalNetwork(computers, connections, DefaultResistance())        
+    new(computers : Computer[], connections : int[,]) = LocalNetwork(computers, connections, DefaultResistance())        
         
 [<EntryPoint>]
 let main argv =       

@@ -4,19 +4,21 @@ open FsUnit
 open NUnit.Framework
 open Foq
 open Virus   
+open Computer
+open OS
 
 [<TestFixture>]
 type LocalNetworkTests() =    
     /// Computer info.
-    let getComputers () = [|{ Name = "1"; OS = Linux; Infected = true }; 
-                            { Name = "2"; OS = Windows; Infected = false };
-                            { Name = "3"; OS = MacOS; Infected = false };
-                            { Name = "4"; OS = Other; Infected = false };
-                            { Name = "5"; OS = Linux; Infected = false };
-                            { Name = "6"; OS = Windows; Infected = false };
-                            { Name = "7"; OS = Other; Infected = false };
-                            { Name = "8"; OS = MacOS; Infected = false };
-                            { Name = "9"; OS = Other; Infected = false }|]    
+    let getComputers () = [|new Computer("1", Linux, true);
+                            new Computer("2", Windows, false);
+                            new Computer("3", MacOS, false);
+                            new Computer("4", Other, false);
+                            new Computer("5", Linux, false);
+                            new Computer("6", Windows, false);
+                            new Computer("7", Other, false);
+                            new Computer("8", MacOS, false);
+                            new Computer("9", Other, false);|]
 
     /// All computers are connected.
     let _fullConnections = array2D [[0; 1; 0; 1; 0; 0; 0; 0; 0];
@@ -48,7 +50,7 @@ type LocalNetworkTests() =
         loop 10
            
         // assert
-        Seq.fold (fun acc elem -> 
+        Seq.fold (fun acc (elem : Computer) -> 
                     if elem.Infected then acc 
                     else (acc + 1)) 0 network.Computers
         |> should equal 8
@@ -64,7 +66,7 @@ type LocalNetworkTests() =
                             .Create()
         let network = LocalNetwork(getComputers (), _fullConnections, resistance)
         
-        let checkVirusInFirstSet isIll epoch = 
+        let checkVirusInFirstSet isIll (epoch : seq<Computer>) = 
             let rec loop n =                
                 if n = 3 then ()
                 else 
@@ -73,7 +75,7 @@ type LocalNetworkTests() =
                 
             loop 0
 
-        let checkVirusInSecondSet isIll epoch = 
+        let checkVirusInSecondSet isIll (epoch : seq<Computer>) = 
             let rec loop n =                
                 if n = 3 then ()
                 else 
@@ -82,7 +84,7 @@ type LocalNetworkTests() =
             
             loop 0
 
-        let checkVirusInThirdSet isIll epoch = 
+        let checkVirusInThirdSet isIll (epoch : seq<Computer>) = 
             let rec loop n =                
                 if n = 2 then ()
                 else 
@@ -125,9 +127,9 @@ type LocalNetworkTests() =
         // arrange
         let alias = Other        
         
-        let computersInfo = [|{ Name = "1"; OS = alias; Infected = true };
-                            { Name = "2"; OS = alias; Infected = false };
-                            { Name = "3"; OS = alias; Infected = false }|]
+        let computersInfo = [|new Computer("1", alias, true);
+                            new Computer("2", alias, false);
+                            new Computer("3", alias, false);|]
 
         let connections = array2D [[0; 1; 0];
                                    [1; 0; 1];
