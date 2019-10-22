@@ -22,19 +22,6 @@ type StringCalculationsTestsClass () =
         result.Value |> should equal 3
     
     [<Test>]
-    member this.``FloatNumbersAsAStringShouldBeCalculated`` () =
-        // act
-        let result = calculate {
-            let! x = "1.0"
-            let! y = "2.0"
-            let z = x + y
-            return z
-        }
-
-        // assert
-        result |> should equal None
-    
-    [<Test>]
     member this.``NotNumbersInStringShouldReturnErrorString`` () =
         // act
         let result = calculate {

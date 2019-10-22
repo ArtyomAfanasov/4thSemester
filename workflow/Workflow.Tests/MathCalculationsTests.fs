@@ -76,9 +76,9 @@ type MathCalculationsTestsClass () =
                 let! a = 1.0 * 1.0
                 return a 
             } 
-            |> ignore) |> should throw typeof<System.Exception>
+            |> ignore) |> should throw typeof<System.ArgumentOutOfRangeException>
    
-// Деление на ноль мною не упущено.
+// I thought about diriving by zero.
 [<TestFixture>]
 type FSharpTestsClass () =
     let rounding calculationAccurancy = new CalculationFlow(calculationAccurancy)
