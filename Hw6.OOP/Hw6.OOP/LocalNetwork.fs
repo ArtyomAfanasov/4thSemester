@@ -4,11 +4,13 @@ open Computer
 open OS
 
 /// Моделирует работу локальной сети. OS: linux, windows, macos, other.
-type LocalNetwork(computers : Computer[], connections : int[,], resistance : IResistance) =         
-        
+type LocalNetwork(computers : Computer[], connections : int[,], resistance : IResistance) =                 
+    /// Компьютеры.
+    let mutable _computers = computers
+    
     /// Вспомогательный массив для избежания заражения через вновь заражённых.
     let isNewbie = Array.create computers.Length false
-
+    
     /// Длина первого измерения (отвечает за соединение с другими ПК) двумерного массива соединений.   
     let lengthOfConnections = Array2D.length1 connections
 
@@ -19,24 +21,7 @@ type LocalNetwork(computers : Computer[], connections : int[,], resistance : IRe
     let OSResistance = Map.ofList [ (Linux, resistance.LinuxResistance); 
                                     (Windows, resistance.WindowsResistance); 
                                     (MacOS, resistance.MacOSResistance); 
-                                    (Other, resistance.OtherOSResistance) ]  
-    
-    /// Объект для случайных величин.
-    let random = System.Random()    
-
-    /// Попытаться заразить компьютер.
-    let tryInfect indexOfPrey (preyInfo : Computer) =
-        let innerAttemptInfection nameOfOS =
-            let bigIsDangerous = random.Next(0, 100)
-            if bigIsDangerous > OSResistance.Item nameOfOS then
-                computers.[indexOfPrey] <- new Computer(preyInfo.Name, preyInfo.OS, true)
-                isNewbie.[indexOfPrey] <- true
-
-        match preyInfo.OS with
-        | Linux -> innerAttemptInfection Linux
-        | Windows -> innerAttemptInfection Windows            
-        | MacOS -> innerAttemptInfection MacOS            
-        | Other -> innerAttemptInfection Other
+                                    (Other, resistance.OtherOSResistance) ]      
             
     /// Сбросить информацию о заражённых в эту эпоху, сделав их "не новичками".
     let resetInfectedInfo () = 
@@ -58,7 +43,7 @@ type LocalNetwork(computers : Computer[], connections : int[,], resistance : IRe
                 let preyInfo = computers.[index]
                 if preyInfo.Infected then loop (index + 1)
                 else 
-                    tryInfect index preyInfo
+                    _computers <- Computer.TryInfect index preyInfo computers OSResistance isNewbie //tryInfect index preyInfo
                     loop (index + 1)
             else loop (index + 1)
         
@@ -87,7 +72,7 @@ type LocalNetwork(computers : Computer[], connections : int[,], resistance : IRe
     member this.NewEpoch() = newEpoch ()
 
     /// Информация о компьютерах: имя, OS, заражён ли.
-    member this.Computers = computers
+    member this.Computers = _computers
 
     /// Состояние сети.
     member this.ShowState() = showState ()
