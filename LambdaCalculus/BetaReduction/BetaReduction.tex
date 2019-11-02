@@ -1,0 +1,18 @@
+\documentclass{article}
+\begin{document}
+{\centering
+  Beta-reduction for $((\lambda a.(\lambda b.b\;b)\;(\lambda b.b\;b))\;b)\;((\lambda c.(c\;b))\;(\lambda a.a))$.\par
+}
+
+$$(\underline{(\lambda a.(\lambda b.b\;b)\;(\lambda b.b\;b))\;b})\;((\lambda c.(c\;b)) (\lambda a.a))$$
+$$\downarrow{\beta}$$
+
+$$((\lambda b.b\;b)\;(\lambda b.b\;b))\;(\underline{(\lambda c.(c\;b)) (\lambda a.a)})$$
+$$\downarrow{\beta}$$
+
+$$((\lambda b.b\;b)\;(\lambda b.b\;b))\;(\underline{(\lambda a.a)\;b})$$
+$$\downarrow{\beta}$$
+
+$$((\lambda b.b\;b)\;(\lambda b.b\;b))\;b$$
+
+\end{document}
