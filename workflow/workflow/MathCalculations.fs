@@ -10,7 +10,3 @@ type CalculationFlow(calculationAccuracy : int) =
     
     /// Округляет число и возвращает результат.
     member this.Return(x : float) = System.Math.Round(x, calculationAccuracy)
-
-[<EntryPoint>]
-let main argv =
-    0

@@ -8,9 +8,6 @@ type StringCalculationFlow() =
     /// Число, полученное из строки.
     let mutable result = 0        
     
-    // Подсказывать компилятору, что нужно string? Или в F# это дурной тон?
-    // Без указания string компилятор думает, что это int.
-    // Кажется, не подсказывать тут нельзя.
     /// Конвертирует строку в int
     member this.Bind(x : string, f) =
         match (Int32.TryParse(x, &result)) with
