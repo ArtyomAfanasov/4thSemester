@@ -8,8 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AttractiveInterpreter.Tests.fs" />
     <Compile Include="Interpreter.Tests.fs" />
+    <Compile Include="AttractiveNormalizer.Tests.fs" />
+    <Compile Include="Normalizer.Tests.fs" />
   </ItemGroup>
 
   <ItemGroup>

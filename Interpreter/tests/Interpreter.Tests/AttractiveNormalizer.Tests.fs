@@ -2,10 +2,10 @@
 
 open NUnit.Framework
 open FsUnit
-open AttractiveInterpreter
+open AttractiveNormalizer
 
 [<TestFixture>]
-type AttractiveInterpreterTestClass () =    
+type AttractiveNormalizerTestClass () =    
     [<Test>]
     member this.``Complex test: alpha conversion, normalization. Test should correct normalize complex term.`` () =
         let theInnermostRightTerm =

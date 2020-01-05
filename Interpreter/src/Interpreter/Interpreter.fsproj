@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AttractiveInterpreter.fs" />
+    <Compile Include="AttractiveNormalizer.fs" />
+    <Compile Include="Normalizer.fs" />
     <Compile Include="Interpreter.fs" />
   </ItemGroup>
 

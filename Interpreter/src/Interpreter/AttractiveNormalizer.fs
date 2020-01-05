@@ -1,5 +1,5 @@
 ﻿/// Использование member'ов в DU для удобства программирования.
-module AttractiveInterpreter
+module AttractiveNormalizer
 
 /// Лямбда-терм.
 type Term = 
