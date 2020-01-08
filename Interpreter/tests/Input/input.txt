@@ -2,3 +2,4 @@
 lh.(lx.(h (x x)) lx.(h (x x)))
 (lx.ly.(x y) b)
 (lx.(x ly.y) b)
+ly.(x y)
