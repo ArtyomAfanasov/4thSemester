@@ -9,6 +9,11 @@
     <Compile Include="AttractiveNormalizer.fs" />
     <Compile Include="Normalizer.fs" />
     <Compile Include="Interpreter.fs" />
+    <Compile Include="Example.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FParsec" Version="1.1.0" />
   </ItemGroup>
 
 </Project>

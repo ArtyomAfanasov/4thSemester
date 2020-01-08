@@ -1,11 +1,22 @@
 ﻿/// Содержит нормализатор лямбда-исчисления.
 module Normalizer
- 
+
 /// Лямбда-терм.
+[<StructuredFormatDisplay("{String}")>]
 type Term = 
-    | Variable of char
+    | Variable of string
     | Application of Term * Term
-    | LambdaAbstraction of char * Term
+    | LambdaAbstraction of string * Term
+
+    /// Converts expression to string.
+    member this.String =
+        match this with
+            | Variable name -> name
+            | Application (func, arg) -> sprintf "(%A %A)" func arg
+            | LambdaAbstraction (param, body) -> sprintf "λ%s.%A" param body
+
+    /// Converts expression to string.
+    override this.ToString() = this.String
 
 /// Получить локальный алфавит аргумента из свободных переменных.
 let getLocalFreeAlphabet argument =
@@ -32,14 +43,14 @@ let performAlphaConversion conflictNames outerTerm =
         match term with
         | Variable(name) -> 
             if List.contains name conflictNames then 
-                Variable((char)(name.ToString().ToUpperInvariant()))
+                Variable((string)(name.ToString().ToUpperInvariant()))
             else
                 term
         | Application(func, argument) -> 
             Application(perform func , perform argument )
         | LambdaAbstraction(name, nextTerm) ->
             if List.contains name conflictNames then
-                LambdaAbstraction((char)(name.ToString().ToUpperInvariant()), perform nextTerm )                                                                                    
+                LambdaAbstraction((string)(name.ToString().ToUpperInvariant()), perform nextTerm )                                                                                    
             else
                 LambdaAbstraction(name, perform nextTerm)   
 
